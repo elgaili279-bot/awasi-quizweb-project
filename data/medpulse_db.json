@@ -1,0 +1,1047 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_001",
+      "email": "admin@medpulse.edu",
+      "password_hash": "e878f730a2d33e1190aa57306b692000ffc672b0910096bd58ad1af86b61e5fa22a9ad27ee85de386a1726e13a2ec7c9d58131d22959f7fc44d986c4f0044519",
+      "salt": "116ffd7f41d7773b25b782232a24994e",
+      "role": "admin",
+      "full_name": "Dr. Elizabeth Blackwell",
+      "display_name": "Platform Administrator",
+      "status": "active",
+      "created_at": "2026-09-23T11:44:19.050Z",
+      "updated_at": "2026-09-23T11:44:19.051Z"
+    },
+    {
+      "id": "usr_student_0c25b9c5-9025-4dda-a7e6-74d36d57ae3d",
+      "email": "student.osler@hopkins.edu",
+      "password_hash": "b51c482a97ca5a1f5bf2f7294a99479018e24fe31cddac7d496e9fb87cca43b6ce253c7cf46e36e4bde0d5f72a6a4b0a12b31cf0d1b29401b431471c9bc3a6f4",
+      "salt": "5e043aa2d3c5eeaf4355c5ad5e8962c4",
+      "role": "student",
+      "full_name": "William Osler",
+      "display_name": "Dr. Osler",
+      "status": "active",
+      "created_at": "2026-09-23T11:52:35.526Z",
+      "updated_at": "2026-09-23T11:52:35.526Z"
+    }
+  ],
+  "student_profiles": [
+    {
+      "user_id": "usr_student_0c25b9c5-9025-4dda-a7e6-74d36d57ae3d",
+      "medical_school_year": "MS3",
+      "university": "Johns Hopkins School of Medicine",
+      "target_exam": "USMLE Step 2 CK"
+    }
+  ],
+  "teacher_profiles": [],
+  "subjects": [
+    {
+      "id": "sub_internal_medicine",
+      "name": "Internal Medicine",
+      "slug": "internal-medicine",
+      "description": "Adult disease prevention, diagnosis, and non-surgical management.",
+      "icon": "Stethoscope",
+      "is_active": true,
+      "display_order": 1
+    },
+    {
+      "id": "sub_surgery",
+      "name": "Surgery",
+      "slug": "surgery",
+      "description": "Surgical conditions, pre-operative evaluation, trauma, and postoperative care.",
+      "icon": "Activity",
+      "is_active": true,
+      "display_order": 2
+    },
+    {
+      "id": "sub_pediatrics",
+      "name": "Pediatrics",
+      "slug": "pediatrics",
+      "description": "Neonatal care, childhood development, pediatric infections, and congenital disorders.",
+      "icon": "Baby",
+      "is_active": true,
+      "display_order": 3
+    },
+    {
+      "id": "sub_obstetrics___gynecology",
+      "name": "Obstetrics & Gynecology",
+      "slug": "obstetrics-gynecology",
+      "description": "Pregnancy management, labor & delivery complications, and reproductive health.",
+      "icon": "HeartHandshake",
+      "is_active": true,
+      "display_order": 4
+    },
+    {
+      "id": "sub_emergency_medicine",
+      "name": "Emergency Medicine",
+      "slug": "emergency-medicine",
+      "description": "Immediate stabilization, toxicology, resuscitation, and acute presentations.",
+      "icon": "Flame",
+      "is_active": true,
+      "display_order": 5
+    },
+    {
+      "id": "sub_pathology",
+      "name": "Pathology",
+      "slug": "pathology",
+      "description": "Cellular adaptation, inflammation, neoplasia, and organ system pathophysiology.",
+      "icon": "Microscope",
+      "is_active": true,
+      "display_order": 6
+    },
+    {
+      "id": "sub_pharmacology",
+      "name": "Pharmacology",
+      "slug": "pharmacology",
+      "description": "Drug mechanisms of action, pharmacokinetics, adverse effects, and contraindications.",
+      "icon": "Pill",
+      "is_active": true,
+      "display_order": 7
+    },
+    {
+      "id": "sub_physiology",
+      "name": "Physiology",
+      "slug": "physiology",
+      "description": "Normal human functional mechanisms across body systems.",
+      "icon": "Gauge",
+      "is_active": true,
+      "display_order": 8
+    },
+    {
+      "id": "sub_anatomy",
+      "name": "Anatomy",
+      "slug": "anatomy",
+      "description": "Gross anatomy, neuroanatomy, embryology, and clinical anatomical correlations.",
+      "icon": "Bone",
+      "is_active": true,
+      "display_order": 9
+    },
+    {
+      "id": "sub_microbiology",
+      "name": "Microbiology",
+      "slug": "microbiology",
+      "description": "Bacteriology, virology, mycology, parasitology, and mechanism of pathogenicity.",
+      "icon": "Bug",
+      "is_active": true,
+      "display_order": 10
+    },
+    {
+      "id": "sub_neurology___neuroscience",
+      "name": "Neurology & Neuroscience",
+      "slug": "neurology-neuroscience",
+      "description": "Central and peripheral nervous system disorders, localized lesions, and stroke.",
+      "icon": "Brain",
+      "is_active": true,
+      "display_order": 11
+    },
+    {
+      "id": "sub_psychiatry",
+      "name": "Psychiatry",
+      "slug": "psychiatry",
+      "description": "Mental health disorders, DSM criteria, psychotherapy, and psychopharmacology.",
+      "icon": "Sparkles",
+      "is_active": true,
+      "display_order": 12
+    },
+    {
+      "id": "sub_biochemistry___genetics",
+      "name": "Biochemistry & Genetics",
+      "slug": "biochemistry-genetics",
+      "description": "Metabolic pathways, inborn errors of metabolism, and molecular genetics.",
+      "icon": "Dna",
+      "is_active": true,
+      "display_order": 13
+    },
+    {
+      "id": "sub_dermatology",
+      "name": "Dermatology",
+      "slug": "dermatology",
+      "description": "Cutaneous lesions, inflammatory dermatoses, and skin malignancies.",
+      "icon": "Shield",
+      "is_active": true,
+      "display_order": 14
+    },
+    {
+      "id": "sub_medical_ethics___clinical_skills",
+      "name": "Medical Ethics & Clinical Skills",
+      "slug": "medical-ethics-clinical-skills",
+      "description": "Bioethics, patient autonomy, informed consent, and core diagnostic communication.",
+      "icon": "BookOpen",
+      "is_active": true,
+      "display_order": 15
+    }
+  ],
+  "topics": [
+    {
+      "id": "top_sub_internal_medicine_1",
+      "subject_id": "sub_internal_medicine",
+      "name": "Cardiovascular System",
+      "slug": "cardiovascular-system",
+      "description": "Key clinical concepts and questions in Cardiovascular System",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_internal_medicine_2",
+      "subject_id": "sub_internal_medicine",
+      "name": "Pulmonology",
+      "slug": "pulmonology",
+      "description": "Key clinical concepts and questions in Pulmonology",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_internal_medicine_3",
+      "subject_id": "sub_internal_medicine",
+      "name": "Gastroenterology & Hepatology",
+      "slug": "gastroenterology-hepatology",
+      "description": "Key clinical concepts and questions in Gastroenterology & Hepatology",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_internal_medicine_4",
+      "subject_id": "sub_internal_medicine",
+      "name": "Nephrology",
+      "slug": "nephrology",
+      "description": "Key clinical concepts and questions in Nephrology",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_internal_medicine_5",
+      "subject_id": "sub_internal_medicine",
+      "name": "Endocrinology",
+      "slug": "endocrinology",
+      "description": "Key clinical concepts and questions in Endocrinology",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_internal_medicine_6",
+      "subject_id": "sub_internal_medicine",
+      "name": "Hematology & Oncology",
+      "slug": "hematology-oncology",
+      "description": "Key clinical concepts and questions in Hematology & Oncology",
+      "display_order": 6
+    },
+    {
+      "id": "top_sub_internal_medicine_7",
+      "subject_id": "sub_internal_medicine",
+      "name": "Rheumatology",
+      "slug": "rheumatology",
+      "description": "Key clinical concepts and questions in Rheumatology",
+      "display_order": 7
+    },
+    {
+      "id": "top_sub_internal_medicine_8",
+      "subject_id": "sub_internal_medicine",
+      "name": "Infectious Disease",
+      "slug": "infectious-disease",
+      "description": "Key clinical concepts and questions in Infectious Disease",
+      "display_order": 8
+    },
+    {
+      "id": "top_sub_surgery_1",
+      "subject_id": "sub_surgery",
+      "name": "Acute Abdomen",
+      "slug": "acute-abdomen",
+      "description": "Key clinical concepts and questions in Acute Abdomen",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_surgery_2",
+      "subject_id": "sub_surgery",
+      "name": "Trauma & Critical Care",
+      "slug": "trauma-critical-care",
+      "description": "Key clinical concepts and questions in Trauma & Critical Care",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_surgery_3",
+      "subject_id": "sub_surgery",
+      "name": "Surgical Oncology",
+      "slug": "surgical-oncology",
+      "description": "Key clinical concepts and questions in Surgical Oncology",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_surgery_4",
+      "subject_id": "sub_surgery",
+      "name": "Vascular Surgery",
+      "slug": "vascular-surgery",
+      "description": "Key clinical concepts and questions in Vascular Surgery",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_surgery_5",
+      "subject_id": "sub_surgery",
+      "name": "Cardiothoracic Surgery",
+      "slug": "cardiothoracic-surgery",
+      "description": "Key clinical concepts and questions in Cardiothoracic Surgery",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_surgery_6",
+      "subject_id": "sub_surgery",
+      "name": "Wound Healing & Shock",
+      "slug": "wound-healing-shock",
+      "description": "Key clinical concepts and questions in Wound Healing & Shock",
+      "display_order": 6
+    },
+    {
+      "id": "top_sub_pediatrics_1",
+      "subject_id": "sub_pediatrics",
+      "name": "Neonatology & APGAR",
+      "slug": "neonatology-apgar",
+      "description": "Key clinical concepts and questions in Neonatology & APGAR",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_pediatrics_2",
+      "subject_id": "sub_pediatrics",
+      "name": "Growth & Developmental Milestones",
+      "slug": "growth-developmental-milestones",
+      "description": "Key clinical concepts and questions in Growth & Developmental Milestones",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_pediatrics_3",
+      "subject_id": "sub_pediatrics",
+      "name": "Pediatric Pulmonology (Croup, Epiglottitis)",
+      "slug": "pediatric-pulmonology-croup-epiglottitis-",
+      "description": "Key clinical concepts and questions in Pediatric Pulmonology (Croup, Epiglottitis)",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_pediatrics_4",
+      "subject_id": "sub_pediatrics",
+      "name": "Congenital Heart Disease",
+      "slug": "congenital-heart-disease",
+      "description": "Key clinical concepts and questions in Congenital Heart Disease",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_pediatrics_5",
+      "subject_id": "sub_pediatrics",
+      "name": "Pediatric Infections & Vaccines",
+      "slug": "pediatric-infections-vaccines",
+      "description": "Key clinical concepts and questions in Pediatric Infections & Vaccines",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_obstetrics___gynecology_1",
+      "subject_id": "sub_obstetrics___gynecology",
+      "name": "Prenatal Care & Normal Labor",
+      "slug": "prenatal-care-normal-labor",
+      "description": "Key clinical concepts and questions in Prenatal Care & Normal Labor",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_obstetrics___gynecology_2",
+      "subject_id": "sub_obstetrics___gynecology",
+      "name": "Hypertensive Disorders of Pregnancy",
+      "slug": "hypertensive-disorders-of-pregnancy",
+      "description": "Key clinical concepts and questions in Hypertensive Disorders of Pregnancy",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_obstetrics___gynecology_3",
+      "subject_id": "sub_obstetrics___gynecology",
+      "name": "Obstetric Hemorrhage",
+      "slug": "obstetric-hemorrhage",
+      "description": "Key clinical concepts and questions in Obstetric Hemorrhage",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_obstetrics___gynecology_4",
+      "subject_id": "sub_obstetrics___gynecology",
+      "name": "Gynecologic Oncology",
+      "slug": "gynecologic-oncology",
+      "description": "Key clinical concepts and questions in Gynecologic Oncology",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_obstetrics___gynecology_5",
+      "subject_id": "sub_obstetrics___gynecology",
+      "name": "Infertility & Menstrual Disorders",
+      "slug": "infertility-menstrual-disorders",
+      "description": "Key clinical concepts and questions in Infertility & Menstrual Disorders",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_emergency_medicine_1",
+      "subject_id": "sub_emergency_medicine",
+      "name": "Advanced Cardiac Life Support (ACLS)",
+      "slug": "advanced-cardiac-life-support-acls-",
+      "description": "Key clinical concepts and questions in Advanced Cardiac Life Support (ACLS)",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_emergency_medicine_2",
+      "subject_id": "sub_emergency_medicine",
+      "name": "Shock & Resuscitation",
+      "slug": "shock-resuscitation",
+      "description": "Key clinical concepts and questions in Shock & Resuscitation",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_emergency_medicine_3",
+      "subject_id": "sub_emergency_medicine",
+      "name": "Toxicology & Overdose",
+      "slug": "toxicology-overdose",
+      "description": "Key clinical concepts and questions in Toxicology & Overdose",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_emergency_medicine_4",
+      "subject_id": "sub_emergency_medicine",
+      "name": "Trauma Resuscitation",
+      "slug": "trauma-resuscitation",
+      "description": "Key clinical concepts and questions in Trauma Resuscitation",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_emergency_medicine_5",
+      "subject_id": "sub_emergency_medicine",
+      "name": "Environmental Emergencies",
+      "slug": "environmental-emergencies",
+      "description": "Key clinical concepts and questions in Environmental Emergencies",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_pathology_1",
+      "subject_id": "sub_pathology",
+      "name": "Cellular Injury & Necrosis",
+      "slug": "cellular-injury-necrosis",
+      "description": "Key clinical concepts and questions in Cellular Injury & Necrosis",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_pathology_2",
+      "subject_id": "sub_pathology",
+      "name": "Acute & Chronic Inflammation",
+      "slug": "acute-chronic-inflammation",
+      "description": "Key clinical concepts and questions in Acute & Chronic Inflammation",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_pathology_3",
+      "subject_id": "sub_pathology",
+      "name": "Neoplasia & Tumor Biology",
+      "slug": "neoplasia-tumor-biology",
+      "description": "Key clinical concepts and questions in Neoplasia & Tumor Biology",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_pathology_4",
+      "subject_id": "sub_pathology",
+      "name": "Hemodynamic Disorders & Thromboembolism",
+      "slug": "hemodynamic-disorders-thromboembolism",
+      "description": "Key clinical concepts and questions in Hemodynamic Disorders & Thromboembolism",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_pathology_5",
+      "subject_id": "sub_pathology",
+      "name": "Autoimmune Pathologies",
+      "slug": "autoimmune-pathologies",
+      "description": "Key clinical concepts and questions in Autoimmune Pathologies",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_pharmacology_1",
+      "subject_id": "sub_pharmacology",
+      "name": "Autonomic Nervous System Drugs",
+      "slug": "autonomic-nervous-system-drugs",
+      "description": "Key clinical concepts and questions in Autonomic Nervous System Drugs",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_pharmacology_2",
+      "subject_id": "sub_pharmacology",
+      "name": "Cardiovascular Pharmacotherapy",
+      "slug": "cardiovascular-pharmacotherapy",
+      "description": "Key clinical concepts and questions in Cardiovascular Pharmacotherapy",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_pharmacology_3",
+      "subject_id": "sub_pharmacology",
+      "name": "Antimicrobial Agents",
+      "slug": "antimicrobial-agents",
+      "description": "Key clinical concepts and questions in Antimicrobial Agents",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_pharmacology_4",
+      "subject_id": "sub_pharmacology",
+      "name": "Neuropharmacology & Analgesics",
+      "slug": "neuropharmacology-analgesics",
+      "description": "Key clinical concepts and questions in Neuropharmacology & Analgesics",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_pharmacology_5",
+      "subject_id": "sub_pharmacology",
+      "name": "Chemotherapeutic Agents",
+      "slug": "chemotherapeutic-agents",
+      "description": "Key clinical concepts and questions in Chemotherapeutic Agents",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_physiology_1",
+      "subject_id": "sub_physiology",
+      "name": "Action Potentials & Excitable Tissues",
+      "slug": "action-potentials-excitable-tissues",
+      "description": "Key clinical concepts and questions in Action Potentials & Excitable Tissues",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_physiology_2",
+      "subject_id": "sub_physiology",
+      "name": "Cardiac Cycle & Hemodynamics",
+      "slug": "cardiac-cycle-hemodynamics",
+      "description": "Key clinical concepts and questions in Cardiac Cycle & Hemodynamics",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_physiology_3",
+      "subject_id": "sub_physiology",
+      "name": "Renal Clearance & Acid-Base Balance",
+      "slug": "renal-clearance-acid-base-balance",
+      "description": "Key clinical concepts and questions in Renal Clearance & Acid-Base Balance",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_physiology_4",
+      "subject_id": "sub_physiology",
+      "name": "Respiratory Mechanics & Gas Exchange",
+      "slug": "respiratory-mechanics-gas-exchange",
+      "description": "Key clinical concepts and questions in Respiratory Mechanics & Gas Exchange",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_physiology_5",
+      "subject_id": "sub_physiology",
+      "name": "Endocrine Feedback Loops",
+      "slug": "endocrine-feedback-loops",
+      "description": "Key clinical concepts and questions in Endocrine Feedback Loops",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_anatomy_1",
+      "subject_id": "sub_anatomy",
+      "name": "Upper & Lower Extremity",
+      "slug": "upper-lower-extremity",
+      "description": "Key clinical concepts and questions in Upper & Lower Extremity",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_anatomy_2",
+      "subject_id": "sub_anatomy",
+      "name": "Thorax & Mediastinum",
+      "slug": "thorax-mediastinum",
+      "description": "Key clinical concepts and questions in Thorax & Mediastinum",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_anatomy_3",
+      "subject_id": "sub_anatomy",
+      "name": "Abdomen & Pelvis",
+      "slug": "abdomen-pelvis",
+      "description": "Key clinical concepts and questions in Abdomen & Pelvis",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_anatomy_4",
+      "subject_id": "sub_anatomy",
+      "name": "Head & Neck",
+      "slug": "head-neck",
+      "description": "Key clinical concepts and questions in Head & Neck",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_anatomy_5",
+      "subject_id": "sub_anatomy",
+      "name": "Cranial Nerves & Neurovascular Pathways",
+      "slug": "cranial-nerves-neurovascular-pathways",
+      "description": "Key clinical concepts and questions in Cranial Nerves & Neurovascular Pathways",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_microbiology_1",
+      "subject_id": "sub_microbiology",
+      "name": "Gram-Positive Cocci & Bacilli",
+      "slug": "gram-positive-cocci-bacilli",
+      "description": "Key clinical concepts and questions in Gram-Positive Cocci & Bacilli",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_microbiology_2",
+      "subject_id": "sub_microbiology",
+      "name": "Gram-Negative Organisms",
+      "slug": "gram-negative-organisms",
+      "description": "Key clinical concepts and questions in Gram-Negative Organisms",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_microbiology_3",
+      "subject_id": "sub_microbiology",
+      "name": "Respiratory & Gastrointestinal Viruses",
+      "slug": "respiratory-gastrointestinal-viruses",
+      "description": "Key clinical concepts and questions in Respiratory & Gastrointestinal Viruses",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_microbiology_4",
+      "subject_id": "sub_microbiology",
+      "name": "Systemic Mycoses",
+      "slug": "systemic-mycoses",
+      "description": "Key clinical concepts and questions in Systemic Mycoses",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_microbiology_5",
+      "subject_id": "sub_microbiology",
+      "name": "Opportunistic Pathogens in Immunocompromise",
+      "slug": "opportunistic-pathogens-in-immunocompromise",
+      "description": "Key clinical concepts and questions in Opportunistic Pathogens in Immunocompromise",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_neurology___neuroscience_1",
+      "subject_id": "sub_neurology___neuroscience",
+      "name": "Ischemic & Hemorrhagic Stroke",
+      "slug": "ischemic-hemorrhagic-stroke",
+      "description": "Key clinical concepts and questions in Ischemic & Hemorrhagic Stroke",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_neurology___neuroscience_2",
+      "subject_id": "sub_neurology___neuroscience",
+      "name": "Epilepsy & Seizures",
+      "slug": "epilepsy-seizures",
+      "description": "Key clinical concepts and questions in Epilepsy & Seizures",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_neurology___neuroscience_3",
+      "subject_id": "sub_neurology___neuroscience",
+      "name": "Movement Disorders & Parkinsonism",
+      "slug": "movement-disorders-parkinsonism",
+      "description": "Key clinical concepts and questions in Movement Disorders & Parkinsonism",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_neurology___neuroscience_4",
+      "subject_id": "sub_neurology___neuroscience",
+      "name": "Demyelinating Diseases (Multiple Sclerosis)",
+      "slug": "demyelinating-diseases-multiple-sclerosis-",
+      "description": "Key clinical concepts and questions in Demyelinating Diseases (Multiple Sclerosis)",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_neurology___neuroscience_5",
+      "subject_id": "sub_neurology___neuroscience",
+      "name": "Peripheral Neuropathies",
+      "slug": "peripheral-neuropathies",
+      "description": "Key clinical concepts and questions in Peripheral Neuropathies",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_psychiatry_1",
+      "subject_id": "sub_psychiatry",
+      "name": "Mood & Depressive Disorders",
+      "slug": "mood-depressive-disorders",
+      "description": "Key clinical concepts and questions in Mood & Depressive Disorders",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_psychiatry_2",
+      "subject_id": "sub_psychiatry",
+      "name": "Schizophrenia & Psychotic Disorders",
+      "slug": "schizophrenia-psychotic-disorders",
+      "description": "Key clinical concepts and questions in Schizophrenia & Psychotic Disorders",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_psychiatry_3",
+      "subject_id": "sub_psychiatry",
+      "name": "Anxiety & Trauma-Related Disorders",
+      "slug": "anxiety-trauma-related-disorders",
+      "description": "Key clinical concepts and questions in Anxiety & Trauma-Related Disorders",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_psychiatry_4",
+      "subject_id": "sub_psychiatry",
+      "name": "Substance Use Disorders",
+      "slug": "substance-use-disorders",
+      "description": "Key clinical concepts and questions in Substance Use Disorders",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_psychiatry_5",
+      "subject_id": "sub_psychiatry",
+      "name": "Childhood Psychiatric Conditions",
+      "slug": "childhood-psychiatric-conditions",
+      "description": "Key clinical concepts and questions in Childhood Psychiatric Conditions",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_biochemistry___genetics_1",
+      "subject_id": "sub_biochemistry___genetics",
+      "name": "Glycolysis, Krebs Cycle & ETC",
+      "slug": "glycolysis-krebs-cycle-etc",
+      "description": "Key clinical concepts and questions in Glycolysis, Krebs Cycle & ETC",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_biochemistry___genetics_2",
+      "subject_id": "sub_biochemistry___genetics",
+      "name": "Lipid Metabolism & Dyslipidemias",
+      "slug": "lipid-metabolism-dyslipidemias",
+      "description": "Key clinical concepts and questions in Lipid Metabolism & Dyslipidemias",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_biochemistry___genetics_3",
+      "subject_id": "sub_biochemistry___genetics",
+      "name": "Inborn Errors of Metabolism",
+      "slug": "inborn-errors-of-metabolism",
+      "description": "Key clinical concepts and questions in Inborn Errors of Metabolism",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_biochemistry___genetics_4",
+      "subject_id": "sub_biochemistry___genetics",
+      "name": "Chromosomal & Mendelian Genetics",
+      "slug": "chromosomal-mendelian-genetics",
+      "description": "Key clinical concepts and questions in Chromosomal & Mendelian Genetics",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_biochemistry___genetics_5",
+      "subject_id": "sub_biochemistry___genetics",
+      "name": "Vitamin & Micronutrient Deficiencies",
+      "slug": "vitamin-micronutrient-deficiencies",
+      "description": "Key clinical concepts and questions in Vitamin & Micronutrient Deficiencies",
+      "display_order": 5
+    },
+    {
+      "id": "top_sub_dermatology_1",
+      "subject_id": "sub_dermatology",
+      "name": "Melanoma & Non-Melanoma Skin Cancers",
+      "slug": "melanoma-non-melanoma-skin-cancers",
+      "description": "Key clinical concepts and questions in Melanoma & Non-Melanoma Skin Cancers",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_dermatology_2",
+      "subject_id": "sub_dermatology",
+      "name": "Papulosquamous Disorders (Psoriasis, Lichen Planus)",
+      "slug": "papulosquamous-disorders-psoriasis-lichen-planus-",
+      "description": "Key clinical concepts and questions in Papulosquamous Disorders (Psoriasis, Lichen Planus)",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_dermatology_3",
+      "subject_id": "sub_dermatology",
+      "name": "Vesiculobullous Diseases (Pemphigus vs Pemphigoid)",
+      "slug": "vesiculobullous-diseases-pemphigus-vs-pemphigoid-",
+      "description": "Key clinical concepts and questions in Vesiculobullous Diseases (Pemphigus vs Pemphigoid)",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_dermatology_4",
+      "subject_id": "sub_dermatology",
+      "name": "Cutaneous Infections",
+      "slug": "cutaneous-infections",
+      "description": "Key clinical concepts and questions in Cutaneous Infections",
+      "display_order": 4
+    },
+    {
+      "id": "top_sub_medical_ethics___clinical_skills_1",
+      "subject_id": "sub_medical_ethics___clinical_skills",
+      "name": "Informed Consent & Capacity",
+      "slug": "informed-consent-capacity",
+      "description": "Key clinical concepts and questions in Informed Consent & Capacity",
+      "display_order": 1
+    },
+    {
+      "id": "top_sub_medical_ethics___clinical_skills_2",
+      "subject_id": "sub_medical_ethics___clinical_skills",
+      "name": "Patient Confidentiality & HIPAA",
+      "slug": "patient-confidentiality-hipaa",
+      "description": "Key clinical concepts and questions in Patient Confidentiality & HIPAA",
+      "display_order": 2
+    },
+    {
+      "id": "top_sub_medical_ethics___clinical_skills_3",
+      "subject_id": "sub_medical_ethics___clinical_skills",
+      "name": "End-of-Life Decisions & Advance Directives",
+      "slug": "end-of-life-decisions-advance-directives",
+      "description": "Key clinical concepts and questions in End-of-Life Decisions & Advance Directives",
+      "display_order": 3
+    },
+    {
+      "id": "top_sub_medical_ethics___clinical_skills_4",
+      "subject_id": "sub_medical_ethics___clinical_skills",
+      "name": "Medical Malpractice & Error Disclosure",
+      "slug": "medical-malpractice-error-disclosure",
+      "description": "Key clinical concepts and questions in Medical Malpractice & Error Disclosure",
+      "display_order": 4
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "quiz_4ccf74c1-4c3c-40c1-8929-7dc130af0593",
+      "title": "Clinical Vignettes: Acute Cardiovascular & Emergency Care",
+      "description": "High-yield board-style examination focusing on early diagnostic workup, ECG interpretation, and evidence-based pharmacotherapy.",
+      "subject_id": "sub_internal_medicine",
+      "topic_id": "top_sub_internal_medicine_1",
+      "difficulty": "USMLE Step 2 CK",
+      "time_limit_minutes": 15,
+      "status": "published",
+      "instructions": "Each question presents a clinical scenario. Select the single best answer. Rationales and high-yield clinical pearls will be provided upon completion.",
+      "created_by": "usr_admin_001",
+      "view_count": 0,
+      "created_at": "2026-09-23T11:52:24.974Z",
+      "updated_at": "2026-09-23T11:52:24.974Z"
+    }
+  ],
+  "questions": [
+    {
+      "id": "q_dfb497c4-9234-4d72-b6f7-ee984d789e2d",
+      "quiz_id": "quiz_4ccf74c1-4c3c-40c1-8929-7dc130af0593",
+      "type": "clinical_vignette",
+      "prompt": "Which of the following is the most appropriate next step in the emergency management of this patient?",
+      "clinical_vignette": {
+        "patient_age": 64,
+        "patient_sex": "Male",
+        "chief_complaint": "Substernal crushing chest pressure radiating to left jaw",
+        "history": "A 64-year-old male arrives at the emergency department with severe chest pain that began 45 minutes ago while shoveling snow. He has a 15-year history of hypertension and hyperlipidemia. He reports associated nausea, diaphoresis, and shortness of breath.",
+        "examination": "BP 146/92 mmHg, HR 98 bpm, RR 20/min, SpO2 98% on room air. Auscultation reveals an S4 gallop without murmurs or lung crackles.",
+        "laboratory": "ECG demonstrates 3.5 mm ST-segment elevation in leads II, III, and aVF with reciprocal ST depression in leads I and aVL. High-sensitivity troponin I is pending."
+      },
+      "explanation": "The patient presents with an acute ST-elevation myocardial infarction (STEMI) involving the inferior wall (leads II, III, and aVF), most commonly caused by occlusion of the Right Coronary Artery (RCA). The immediate standard of care is emergent reperfusion via Percutaneous Coronary Intervention (PCI) within 90 minutes of medical contact (door-to-balloon time), along with chewable aspirin and an oral P2Y12 inhibitor.",
+      "learning_point": "Door-to-balloon time for primary PCI in STEMI is <90 minutes at a PCI-capable facility, or <120 minutes if transfer is required.",
+      "reference": "2023 ACC/AHA Guideline for the Management of Patients With Acute Coronary Syndromes; Harrison's Internal Medicine 21st Ed., Ch. 275",
+      "difficulty": "USMLE Step 2 CK",
+      "topic_id": "top_sub_internal_medicine_1",
+      "points": 1,
+      "display_order": 1,
+      "created_at": "2026-09-23T11:52:24.974Z"
+    },
+    {
+      "id": "q_00b57a87-afcc-4501-af8c-24b60a9bb093",
+      "quiz_id": "quiz_4ccf74c1-4c3c-40c1-8929-7dc130af0593",
+      "type": "clinical_vignette",
+      "prompt": "Which of the following is the most likely diagnosis?",
+      "clinical_vignette": {
+        "patient_age": 23,
+        "patient_sex": "Female",
+        "chief_complaint": "Migratory lower abdominal pain and anorexia",
+        "history": "A 23-year-old medical student reports abdominal discomfort that began 14 hours ago as dull peri-umbilical aching. Over the past 4 hours, the pain has sharpened and relocated to the right lower quadrant. She has vomited twice and has complete anorexia.",
+        "examination": "Temperature 38.2°C (100.8°F), HR 102 bpm. Marked tenderness at McBurney point with involuntary guarding. Palpation of the left lower quadrant elicits pain in the right lower quadrant.",
+        "laboratory": "WBC 14,800/mm³ with 82% neutrophils. Urine pregnancy test is negative."
+      },
+      "explanation": "The classic presentation of dull periumbilical pain shifting to focal RLQ somatic pain (McBurney point) along with anorexia (\"hamburger sign\"), fever, and positive Rovsing sign (RLQ pain with LLQ palpation) is pathognomonic for acute appendicitis. Appendiceal luminal obstruction leads to initial visceral pain (T10 dermatome), followed by transmural inflammation irritating the parietal peritoneum.",
+      "learning_point": "Appendicitis pain begins visceral (periumbilical T10) then shifts to somatic (RLQ McBurney point) once the parietal peritoneum is inflamed.",
+      "reference": "Sabiston Textbook of Surgery, 21st Ed., Chapter 51",
+      "difficulty": "Intermediate",
+      "topic_id": "top_sub_internal_medicine_1",
+      "points": 1,
+      "display_order": 2,
+      "created_at": "2026-09-23T11:52:24.974Z"
+    },
+    {
+      "id": "q_a73180b0-9ef4-4642-8d62-d8c8859cb3ff",
+      "quiz_id": "quiz_4ccf74c1-4c3c-40c1-8929-7dc130af0593",
+      "type": "sba",
+      "prompt": "A 71-year-old female presents with sudden onset of right facial droop and right arm weakness that began 80 minutes ago. Non-contrast head CT excludes intracranial hemorrhage. Blood pressure is 168/94 mmHg, and blood glucose is 128 mg/dL. Which of the following is the most appropriate acute therapy?",
+      "explanation": "In acute ischemic stroke with symptom onset within 4.5 hours and no contraindications (such as active bleeding, recent intracranial surgery, or platelets <100,000), intravenous thrombolysis with alteplase (tPA) or tenecteplase is the recommended first-line therapy to restore cerebral perfusion.",
+      "learning_point": "Intravenous thrombolysis (tPA) is indicated within 4.5 hours of symptom onset for acute ischemic stroke without hemorrhage on non-contrast CT.",
+      "reference": "2019 AHA/ASA Guidelines for the Early Management of Patients With Acute Ischemic Stroke",
+      "difficulty": "USMLE Step 2 CK",
+      "topic_id": "top_sub_internal_medicine_1",
+      "points": 1,
+      "display_order": 3,
+      "created_at": "2026-09-23T11:52:24.974Z"
+    }
+  ],
+  "answer_choices": [
+    {
+      "id": "c_f6be09c4-5f47-40a1-b96b-f02fbacc074d",
+      "choice_text": "Administer chewable aspirin and activate catheterization laboratory for emergent PCI",
+      "is_correct": true,
+      "explanation": "Correct: Dual antiplatelet therapy (aspirin + P2Y12 inhibitor) and prompt mechanical reperfusion is the gold standard for acute STEMI.",
+      "display_order": 1,
+      "question_id": "q_dfb497c4-9234-4d72-b6f7-ee984d789e2d"
+    },
+    {
+      "id": "c_b9bd2a41-fc27-415c-bc5f-a7b95a0cf5ef",
+      "choice_text": "Wait for initial troponin I and CK-MB laboratory results before intervention",
+      "is_correct": false,
+      "explanation": "Incorrect: STEMI diagnosis is made electrocardiographically; reperfusion should never be delayed awaiting cardiac biomarker results.",
+      "display_order": 2,
+      "question_id": "q_dfb497c4-9234-4d72-b6f7-ee984d789e2d"
+    },
+    {
+      "id": "c_6103fbfc-be49-4f8a-a35f-915631296a79",
+      "choice_text": "Administer sublingual nitroglycerin and intravenous metoprolol without ECG monitoring",
+      "is_correct": false,
+      "explanation": "Incorrect: Nitrates can precipitate severe hypotension in inferior/right ventricular infarctions due to preload dependence.",
+      "display_order": 3,
+      "question_id": "q_dfb497c4-9234-4d72-b6f7-ee984d789e2d"
+    },
+    {
+      "id": "c_a3f9f5c7-c30f-4505-8ced-3086909ea4a2",
+      "choice_text": "Perform an urgent CT angiogram of the chest to rule out pulmonary embolism",
+      "is_correct": false,
+      "explanation": "Incorrect: The ECG diagnostic findings of STEMI take clear clinical priority.",
+      "display_order": 4,
+      "question_id": "q_dfb497c4-9234-4d72-b6f7-ee984d789e2d"
+    },
+    {
+      "id": "c_533849a0-62c1-49bc-8d07-6666e432d771",
+      "choice_text": "Acute Appendicitis",
+      "is_correct": true,
+      "explanation": "Correct: Classic pain migration from periumbilical to RLQ with fever and Rovsing sign.",
+      "display_order": 1,
+      "question_id": "q_00b57a87-afcc-4501-af8c-24b60a9bb093"
+    },
+    {
+      "id": "c_348162c8-c742-4b59-b916-08ccb1658451",
+      "choice_text": "Ruptured Ovarian Cyst",
+      "is_correct": false,
+      "explanation": "Incorrect: Sudden unilateral pelvic pain following strenuous activity without periumbilical prodrome.",
+      "display_order": 2,
+      "question_id": "q_00b57a87-afcc-4501-af8c-24b60a9bb093"
+    },
+    {
+      "id": "c_acd39027-4014-479d-a18c-ca4c2bdd17a2",
+      "choice_text": "Nephrolithiasis",
+      "is_correct": false,
+      "explanation": "Incorrect: Typically presents as severe colicky flank pain radiating to the groin with hematuria, not periumbilical migration.",
+      "display_order": 3,
+      "question_id": "q_00b57a87-afcc-4501-af8c-24b60a9bb093"
+    },
+    {
+      "id": "c_7e4046ef-4411-4e79-b220-bb1e79b847e4",
+      "choice_text": "Acute Diverticulitis",
+      "is_correct": false,
+      "explanation": "Incorrect: Most commonly affects the sigmoid colon in older adults, causing left lower quadrant tenderness.",
+      "display_order": 4,
+      "question_id": "q_00b57a87-afcc-4501-af8c-24b60a9bb093"
+    },
+    {
+      "id": "c_7140736a-ae45-4f33-bc83-912d9717f660",
+      "choice_text": "Intravenous Alteplase (recombinant tissue plasminogen activator)",
+      "is_correct": true,
+      "explanation": "Correct: The patient is within the 4.5-hour thrombolytic window and has no CT evidence of hemorrhage.",
+      "display_order": 1,
+      "question_id": "q_a73180b0-9ef4-4642-8d62-d8c8859cb3ff"
+    },
+    {
+      "id": "c_62efd8e4-aa44-48e2-b836-54428b8edb99",
+      "choice_text": "Immediate administration of high-dose intravenous heparin",
+      "is_correct": false,
+      "explanation": "Incorrect: Full-dose anticoagulation is contraindicated in acute stroke due to high risk of fatal hemorrhagic transformation.",
+      "display_order": 2,
+      "question_id": "q_a73180b0-9ef4-4642-8d62-d8c8859cb3ff"
+    },
+    {
+      "id": "c_ef486f6d-d344-45a0-901e-b22dd8f068a5",
+      "choice_text": "Aggressive blood pressure lowering with IV labetalol to BP < 120/80 mmHg",
+      "is_correct": false,
+      "explanation": "Incorrect: Overly aggressive BP reduction impairs cerebral perfusion in penumbral brain tissue. BP is tolerated up to 185/110 mmHg prior to tPA.",
+      "display_order": 3,
+      "question_id": "q_a73180b0-9ef4-4642-8d62-d8c8859cb3ff"
+    },
+    {
+      "id": "c_ff026267-85c3-457c-8f68-a826a26c98bf",
+      "choice_text": "Oral aspirin 325 mg with discharge home for outpatient MRI",
+      "is_correct": false,
+      "explanation": "Incorrect: Patient requires emergent inpatient acute stroke management and evaluation for mechanical thrombectomy.",
+      "display_order": 4,
+      "question_id": "q_a73180b0-9ef4-4642-8d62-d8c8859cb3ff"
+    }
+  ],
+  "quiz_attempts": [
+    {
+      "id": "att_45682815-7126-4d1d-aeea-6768cbd99715",
+      "quiz_id": "quiz_4ccf74c1-4c3c-40c1-8929-7dc130af0593",
+      "student_id": "usr_student_0c25b9c5-9025-4dda-a7e6-74d36d57ae3d",
+      "started_at": "2026-09-23T11:53:12.828Z",
+      "completed_at": null,
+      "score": 0,
+      "max_score": 3,
+      "percentage": 0,
+      "time_spent_seconds": 0,
+      "status": "in_progress"
+    },
+    {
+      "id": "att_032679d0-ba74-4c36-b8fd-bd980574392e",
+      "quiz_id": "quiz_4ccf74c1-4c3c-40c1-8929-7dc130af0593",
+      "student_id": "usr_student_0c25b9c5-9025-4dda-a7e6-74d36d57ae3d",
+      "started_at": "2026-09-23T11:53:21.989Z",
+      "completed_at": "2026-09-23T11:53:21.998Z",
+      "score": 3,
+      "max_score": 3,
+      "percentage": 100,
+      "time_spent_seconds": 140,
+      "status": "completed"
+    }
+  ],
+  "student_answers": [
+    {
+      "id": "ans_fddddac2-f2aa-4719-8f18-fd50601a9761",
+      "attempt_id": "att_032679d0-ba74-4c36-b8fd-bd980574392e",
+      "question_id": "q_dfb497c4-9234-4d72-b6f7-ee984d789e2d",
+      "selected_choice_ids": [
+        "c_f6be09c4-5f47-40a1-b96b-f02fbacc074d"
+      ],
+      "is_correct": true,
+      "points_earned": 1
+    },
+    {
+      "id": "ans_05150c15-9e37-46ab-912d-954bed4326d4",
+      "attempt_id": "att_032679d0-ba74-4c36-b8fd-bd980574392e",
+      "question_id": "q_00b57a87-afcc-4501-af8c-24b60a9bb093",
+      "selected_choice_ids": [
+        "c_533849a0-62c1-49bc-8d07-6666e432d771"
+      ],
+      "is_correct": true,
+      "points_earned": 1
+    },
+    {
+      "id": "ans_ef4c6354-892a-49ad-bd52-405b16f41158",
+      "attempt_id": "att_032679d0-ba74-4c36-b8fd-bd980574392e",
+      "question_id": "q_a73180b0-9ef4-4642-8d62-d8c8859cb3ff",
+      "selected_choice_ids": [
+        "c_7140736a-ae45-4f33-bc83-912d9717f660"
+      ],
+      "is_correct": true,
+      "points_earned": 1
+    }
+  ],
+  "bookmarks": [],
+  "question_reports": [],
+  "user_achievements": [
+    {
+      "code": "FIRST_QUIZ",
+      "title": "Clinical Induction",
+      "description": "Completed your first medical assessment.",
+      "icon": "GraduationCap",
+      "id": "ach_d5f35f37-443f-4ddf-b361-fc254ad4c5cb",
+      "user_id": "usr_student_0c25b9c5-9025-4dda-a7e6-74d36d57ae3d",
+      "unlocked_at": "2026-09-23T11:53:21.999Z"
+    },
+    {
+      "code": "PERFECT_SCORE",
+      "title": "Board Certified Perfection",
+      "description": "Scored a perfect 100% on a medical examination.",
+      "icon": "Trophy",
+      "id": "ach_968f0664-ff58-46e1-9b0f-320a28e0b7c7",
+      "user_id": "usr_student_0c25b9c5-9025-4dda-a7e6-74d36d57ae3d",
+      "unlocked_at": "2026-09-23T11:53:21.999Z"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "MedPulse - Medical Education & Question Bank",
+  "description": "Comprehensive medical quiz, clinical question-bank, and assessment platform for medical students, educators, and institutions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
