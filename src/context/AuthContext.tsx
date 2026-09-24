@@ -9,6 +9,7 @@ interface AuthContextType {
   register: (payload: any) => Promise<User>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  switchRole: (role: 'student' | 'teacher') => Promise<User>;
   authModalOpen: boolean;
   openAuthModal: (initialMode?: 'login' | 'register-student' | 'register-teacher' | 'forgot-password') => void;
   closeAuthModal: () => void;
@@ -68,6 +69,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
+  const switchRole = async (targetRole: 'student' | 'teacher'): Promise<User> => {
+    const res = await api.switchRole(targetRole);
+    setStoredToken(res.token);
+    setUser(res.user);
+    return res.user;
+  };
+
   const openAuthModal = (initialMode: 'login' | 'register-student' | 'register-teacher' | 'forgot-password' = 'login') => {
     setAuthModalMode(initialMode);
     setAuthModalOpen(true);
@@ -86,6 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         logout,
         refreshUser,
+        switchRole,
         authModalOpen,
         openAuthModal,
         closeAuthModal,

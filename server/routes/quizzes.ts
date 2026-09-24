@@ -70,7 +70,7 @@ function validateQuizForPublish(quizId: string): { valid: boolean; errors: strin
 // Public students see only published quizzes
 // Teachers can see their own quizzes (drafts + published) via ?myQuizzes=true
 quizzesRouter.get('/', optionalAuthenticate, (req: AuthenticatedRequest, res: Response): void => {
-  const { subject_id, topic_id, difficulty, search, myQuizzes, sort } = req.query;
+  const { subject_id, topic_id, specialty, medical_specialty, difficulty, search, myQuizzes, sort } = req.query;
   const user = req.user;
 
   let filterStatus: QuizStatus[] = ['published'];
@@ -88,10 +88,13 @@ quizzesRouter.get('/', optionalAuthenticate, (req: AuthenticatedRequest, res: Re
     }
   }
 
+  const targetSpecialty = (specialty || medical_specialty) ? String(specialty || medical_specialty).trim() : undefined;
+
   let quizzes = db.getQuizzes({
     status: filterStatus,
     subject_id: subject_id ? String(subject_id) : undefined,
     topic_id: topic_id ? String(topic_id) : undefined,
+    medical_specialty: targetSpecialty,
     difficulty: difficulty ? (String(difficulty) as QuizDifficulty) : undefined,
     search: search ? String(search) : undefined,
     created_by: filterCreator,
@@ -110,8 +113,28 @@ quizzesRouter.get('/', optionalAuthenticate, (req: AuthenticatedRequest, res: Re
     const questions = db.getQuestionsByQuizId(q.id);
     const attempts = allAttempts.filter(a => a.quiz_id === q.id);
 
+    // Fallback inferred specialty if not explicitly set
+    let inferredSpecialty = q.medical_specialty;
+    if (!inferredSpecialty) {
+      if (subject?.name) {
+        if (subject.name.toLowerCase().includes('pathology')) inferredSpecialty = 'Pathology';
+        else if (subject.name.toLowerCase().includes('psychiatry')) inferredSpecialty = 'Psychiatry & Neurology';
+        else if (subject.name.toLowerCase().includes('radiology')) inferredSpecialty = 'Radiology';
+        else if (subject.name.toLowerCase().includes('ent')) inferredSpecialty = 'ENT';
+        else if (subject.name.toLowerCase().includes('dermatology')) inferredSpecialty = 'Dermatology';
+        else if (subject.name.toLowerCase().includes('ophthalmology')) inferredSpecialty = 'Ophthalmology';
+        else if (subject.name.toLowerCase().includes('infectious')) inferredSpecialty = 'Infectious Diseases';
+        else if (subject.name.toLowerCase().includes('ethics')) inferredSpecialty = 'Medical Ethics';
+        else if (subject.name.toLowerCase().includes('forensic')) inferredSpecialty = 'Forensic & Toxicology';
+        else inferredSpecialty = subject.name;
+      } else {
+        inferredSpecialty = 'General Medicine';
+      }
+    }
+
     return {
       ...q,
+      medical_specialty: inferredSpecialty,
       subject_name: subject?.name || 'General Medical',
       topic_name: topic?.name || null,
       question_count: questions.length,
@@ -121,16 +144,55 @@ quizzesRouter.get('/', optionalAuthenticate, (req: AuthenticatedRequest, res: Re
     };
   });
 
-  if (sort === 'popular') {
-    enriched.sort((a, b) => b.attempt_count - a.attempt_count);
-  } else if (sort === 'oldest') {
-    enriched.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-  } else {
-    // newest default
-    enriched.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  // Filter enriched by targetSpecialty if not already filtered
+  let filteredList = enriched;
+  if (targetSpecialty && targetSpecialty.toLowerCase() !== 'all') {
+    filteredList = filteredList.filter(q => 
+      (q.medical_specialty || '').toLowerCase() === targetSpecialty.toLowerCase()
+    );
   }
 
-  res.json({ quizzes: enriched });
+  // Handle comprehensive sorting
+  if (sort === 'popular') {
+    filteredList.sort((a, b) => b.attempt_count - a.attempt_count);
+  } else if (sort === 'oldest') {
+    filteredList.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  } else if (sort === 'specialty_asc') {
+    filteredList.sort((a, b) => (a.medical_specialty || '').localeCompare(b.medical_specialty || ''));
+  } else if (sort === 'specialty_desc') {
+    filteredList.sort((a, b) => (b.medical_specialty || '').localeCompare(a.medical_specialty || ''));
+  } else if (sort === 'title_asc') {
+    filteredList.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sort === 'questions_desc') {
+    filteredList.sort((a, b) => b.question_count - a.question_count);
+  } else if (sort === 'duration_asc') {
+    filteredList.sort((a, b) => (a.time_limit_minutes || 999) - (b.time_limit_minutes || 999));
+  } else if (sort === 'duration_desc') {
+    filteredList.sort((a, b) => (b.time_limit_minutes || 0) - (a.time_limit_minutes || 0));
+  } else if (sort === 'difficulty_asc') {
+    const diffWeights: Record<string, number> = {
+      'Beginner': 1,
+      'Curriculum Core': 2,
+      'Intermediate': 3,
+      'Clinical Case': 4,
+      'Advanced': 5,
+    };
+    filteredList.sort((a, b) => (diffWeights[a.difficulty] || 3) - (diffWeights[b.difficulty] || 3));
+  } else if (sort === 'difficulty_desc') {
+    const diffWeights: Record<string, number> = {
+      'Beginner': 1,
+      'Curriculum Core': 2,
+      'Intermediate': 3,
+      'Clinical Case': 4,
+      'Advanced': 5,
+    };
+    filteredList.sort((a, b) => (diffWeights[b.difficulty] || 3) - (diffWeights[a.difficulty] || 3));
+  } else {
+    // newest default
+    filteredList.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }
+
+  res.json({ quizzes: filteredList });
 });
 
 // GET /api/quizzes/:id
@@ -208,26 +270,45 @@ quizzesRouter.get('/:id', optionalAuthenticate, (req: AuthenticatedRequest, res:
 // POST /api/quizzes - Create new quiz (Teacher or Admin only)
 quizzesRouter.post('/', authenticate, requireRole('teacher', 'admin'), (req: AuthenticatedRequest, res: Response): void => {
   const user = req.user!;
-  const { title, description, subject_id, topic_id, difficulty, time_limit_minutes, instructions } = req.body;
+  const {
+    title,
+    description,
+    subject_id,
+    subject_ids,
+    topic_id,
+    medical_specialty,
+    specialty,
+    difficulty,
+    time_limit_minutes,
+    max_attempts,
+    is_mock_exam,
+    instructions,
+  } = req.body;
 
   if (!title || !title.trim()) {
     res.status(400).json({ error: 'Quiz title is required.' });
     return;
   }
 
-  if (!subject_id) {
+  if (!subject_id && (!Array.isArray(subject_ids) || subject_ids.length === 0)) {
     res.status(400).json({ error: 'Subject is required.' });
     return;
   }
+
+  const primarySubjectId = subject_id || (Array.isArray(subject_ids) && subject_ids.length > 0 ? subject_ids[0] : 'sub_pathology');
 
   const newQuiz: Quiz = {
     id: `quiz_${crypto.randomUUID()}`,
     title: title.trim(),
     description: description?.trim() || '',
-    subject_id,
+    subject_id: primarySubjectId,
+    subject_ids: Array.isArray(subject_ids) ? subject_ids : undefined,
     topic_id: topic_id || undefined,
+    medical_specialty: (medical_specialty || specialty)?.trim() || undefined,
     difficulty: difficulty || 'Intermediate',
     time_limit_minutes: Number(time_limit_minutes) || 0,
+    max_attempts: max_attempts !== undefined ? Number(max_attempts) : 0,
+    is_mock_exam: !!is_mock_exam,
     status: 'draft',
     instructions: instructions?.trim() || 'Select the single best answer or all applicable choices. Clinical reasoning is advised.',
     created_by: user.id,
@@ -255,15 +336,32 @@ quizzesRouter.put('/:id', authenticate, (req: AuthenticatedRequest, res: Respons
     return;
   }
 
-  const { title, description, subject_id, topic_id, difficulty, time_limit_minutes, instructions } = req.body;
+  const {
+    title,
+    description,
+    subject_id,
+    subject_ids,
+    topic_id,
+    medical_specialty,
+    specialty,
+    difficulty,
+    time_limit_minutes,
+    max_attempts,
+    is_mock_exam,
+    instructions,
+  } = req.body;
 
   const updated = db.updateQuiz(quiz.id, {
     ...(title && { title: title.trim() }),
     ...(description !== undefined && { description: description.trim() }),
     ...(subject_id && { subject_id }),
+    ...(subject_ids !== undefined && { subject_ids: Array.isArray(subject_ids) ? subject_ids : undefined }),
     ...(topic_id !== undefined && { topic_id: topic_id || undefined }),
+    ...((medical_specialty !== undefined || specialty !== undefined) && { medical_specialty: (medical_specialty || specialty)?.trim() || undefined }),
     ...(difficulty && { difficulty }),
     ...(time_limit_minutes !== undefined && { time_limit_minutes: Number(time_limit_minutes) }),
+    ...(max_attempts !== undefined && { max_attempts: Number(max_attempts) }),
+    ...(is_mock_exam !== undefined && { is_mock_exam: !!is_mock_exam }),
     ...(instructions !== undefined && { instructions: instructions.trim() }),
   });
 

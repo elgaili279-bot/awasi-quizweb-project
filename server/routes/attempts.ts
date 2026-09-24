@@ -28,6 +28,22 @@ attemptsRouter.post('/start', authenticate, requireRole('student', 'admin'), (re
     return;
   }
 
+  // Check attempt limit if configured (1, 2, or unlimited)
+  const previousCompletedAttempts = db.getAttemptsByStudent(user.id)
+    .filter(a => a.quiz_id === quiz.id && a.status === 'completed');
+
+  if (quiz.max_attempts && quiz.max_attempts > 0 && previousCompletedAttempts.length >= quiz.max_attempts) {
+    res.status(400).json({
+      error: `Maximum allowed attempts (${quiz.max_attempts}) reached for this examination.`,
+      max_attempts: quiz.max_attempts,
+      completed_attempts: previousCompletedAttempts.length,
+    });
+    return;
+  }
+
+  const attemptNumber = previousCompletedAttempts.length + 1;
+  const isFirstAttempt = (attemptNumber === 1);
+
   const questions = db.getQuestionsByQuizId(quiz.id);
   if (questions.length === 0) {
     res.status(400).json({ error: 'This quiz has no questions available.' });
@@ -48,17 +64,24 @@ attemptsRouter.post('/start', authenticate, requireRole('student', 'admin'), (re
     percentage: 0,
     time_spent_seconds: 0,
     status: 'in_progress',
+    attempt_number: attemptNumber,
+    is_first_attempt: isFirstAttempt,
+    flagged_question_ids: [],
   };
 
   db.createAttempt(attempt);
 
   res.status(201).json({
     attempt_id: attempt.id,
+    attempt_number: attemptNumber,
+    is_first_attempt: isFirstAttempt,
+    max_attempts: quiz.max_attempts || 0,
     quiz: {
       id: quiz.id,
       title: quiz.title,
       time_limit_minutes: quiz.time_limit_minutes,
       instructions: quiz.instructions,
+      is_mock_exam: !!quiz.is_mock_exam,
     },
     started_at: attempt.started_at,
   });
@@ -92,7 +115,7 @@ attemptsRouter.post('/:id/submit', authenticate, (req: AuthenticatedRequest, res
     return;
   }
 
-  const { answers, time_spent_seconds } = req.body;
+  const { answers, time_spent_seconds, flagged_question_ids } = req.body;
   // answers is an array: [{ question_id: string, selected_choice_ids: string[] }]
   if (!Array.isArray(answers)) {
     res.status(400).json({ error: 'Invalid answers format. Expected an array of answers.' });
@@ -149,6 +172,15 @@ attemptsRouter.post('/:id/submit', authenticate, (req: AuthenticatedRequest, res
     const pointsEarned = isCorrect ? qPoints : 0;
     totalScoreEarned += pointsEarned;
 
+    // Automatic Weak Points Sync:
+    // If incorrect (or unanswered): record as a weak point for personal active revision
+    if (!isCorrect) {
+      db.recordWeakPoint(user.id, q.id, q.subject_id || quiz.subject_id, q.topic_id || quiz.topic_id);
+    } else {
+      // If student answered correctly, record success to track mastery progress
+      db.recordWeakPointSuccess(user.id, q.id);
+    }
+
     recordedStudentAnswers.push({
       id: `ans_${crypto.randomUUID()}`,
       attempt_id: attempt.id,
@@ -171,6 +203,10 @@ attemptsRouter.post('/:id/submit', authenticate, (req: AuthenticatedRequest, res
     completed_at: completedAt,
     student_answers: recordedStudentAnswers,
   });
+
+  if (updatedAttempt && Array.isArray(flagged_question_ids)) {
+    updatedAttempt.flagged_question_ids = flagged_question_ids;
+  }
 
   // Award Achievements based on actual student progress
   db.awardAchievement(user.id, {

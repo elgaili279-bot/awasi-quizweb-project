@@ -68,6 +68,7 @@ export const QuizBuilder: React.FC<QuizBuilderProps> = ({ quizId, onExit, onSucc
   const [currentQuizId, setCurrentQuizId] = useState<string | null>(quizId || null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [medicalSpecialty, setMedicalSpecialty] = useState<string>('Cardiology');
   const [subjectId, setSubjectId] = useState('');
   const [topicId, setTopicId] = useState('');
   const [difficulty, setDifficulty] = useState<QuizDifficulty>('Intermediate');
@@ -104,6 +105,7 @@ export const QuizBuilder: React.FC<QuizBuilderProps> = ({ quizId, onExit, onSucc
           setCurrentQuizId(q.id);
           setTitle(q.title);
           setDescription(q.description || '');
+          setMedicalSpecialty(q.medical_specialty || 'Cardiology');
           setSubjectId(q.subject_id);
           setTopicId(q.topic_id || '');
           setDifficulty(q.difficulty);
@@ -322,6 +324,7 @@ export const QuizBuilder: React.FC<QuizBuilderProps> = ({ quizId, onExit, onSucc
       const quizPayload = {
         title: title.trim(),
         description: description.trim(),
+        medical_specialty: medicalSpecialty.trim(),
         subject_id: subjectId,
         topic_id: topicId || null,
         difficulty,
@@ -543,10 +546,34 @@ export const QuizBuilder: React.FC<QuizBuilderProps> = ({ quizId, onExit, onSucc
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Subject *
+                  Medical Specialty *
+                </label>
+                <select
+                  value={medicalSpecialty}
+                  onChange={(e) => setMedicalSpecialty(e.target.value)}
+                  className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
+                >
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="Pediatrics">Pediatrics</option>
+                  <option value="Surgery">Surgery</option>
+                  <option value="Pathology">Pathology</option>
+                  <option value="Radiology">Radiology</option>
+                  <option value="Dermatology">Dermatology</option>
+                  <option value="ENT">ENT</option>
+                  <option value="Ophthalmology">Ophthalmology</option>
+                  <option value="Infectious Diseases">Infectious Diseases</option>
+                  <option value="Psychiatry & Neurology">Psychiatry & Neurology</option>
+                  <option value="Toxicology & Forensic">Toxicology & Forensic</option>
+                  <option value="Medical Ethics">Medical Ethics</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Curriculum Subject *
                 </label>
                 <select
                   value={subjectId}
@@ -593,11 +620,11 @@ export const QuizBuilder: React.FC<QuizBuilderProps> = ({ quizId, onExit, onSucc
                   onChange={(e) => setDifficulty(e.target.value as QuizDifficulty)}
                   className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
                 >
-                  <option value="Beginner">Beginner / Pre-Clinical</option>
-                  <option value="Intermediate">Intermediate Clerkship</option>
-                  <option value="Advanced">Advanced Sub-Internship</option>
-                  <option value="USMLE Step 1">USMLE Step 1</option>
-                  <option value="USMLE Step 2 CK">USMLE Step 2 CK</option>
+                  <option value="Curriculum Core">Curriculum Core</option>
+                  <option value="Clinical Case">Clinical Case Vignettes</option>
+                  <option value="Intermediate">Intermediate Rotation</option>
+                  <option value="Advanced">Advanced Clinical</option>
+                  <option value="Beginner">Foundational</option>
                 </select>
               </div>
 

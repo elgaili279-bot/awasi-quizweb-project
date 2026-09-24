@@ -141,9 +141,10 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quizId, onQuizFinished, 
         selected_choice_ids: answers[q.id] || [],
       }));
 
-      const res = await api.submitAttempt(attemptId, {
+      const res = await (api.submitAttempt as any)(attemptId, {
         answers: answersPayload,
         time_spent_seconds: timeSpentSeconds,
+        flagged_question_ids: Array.from(markedForReview),
       });
 
       onQuizFinished(res.attempt.id);

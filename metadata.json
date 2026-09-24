@@ -1,6 +1,6 @@
 {
-  "name": "MedPulse - Medical Education & Question Bank",
-  "description": "Comprehensive medical quiz, clinical question-bank, and assessment platform for medical students, educators, and institutions.",
+  "name": "AWASI QUIZWEB — Cohort 99 Fourth-Year Medical Curriculum",
+  "description": "Academic quiz and learning platform for Cohort 99 (Al-Awasi), Faculty of Medicine, University of Khartoum — dedicated to the Fourth-Year Medical Curriculum.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -14,12 +14,15 @@ import {
   TrendingUp,
   Award,
   Users,
-  X
+  X,
+  Radio,
+  Megaphone
 } from 'lucide-react';
 import { Quiz } from '../types';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { AnnouncementsWidget } from './AnnouncementsWidget';
 
 interface TeacherDashboardProps {
   onCreateQuiz: () => void;
@@ -111,7 +114,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
-      {/* Header and Create Button */}
+      {/* Header and Action Buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="text-xs font-bold text-blue-600 dark:text-amber-400 uppercase tracking-wider">
@@ -121,18 +124,34 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
             Teacher Assessment Dashboard
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Author accredited medical quizzes, manage drafts, review clinical performance, and monitor item difficulty.
+            Author accredited medical quizzes, broadcast news to students, manage drafts, and monitor exam readiness.
           </p>
         </div>
 
-        <button
-          onClick={onCreateQuiz}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-700 to-sky-600 hover:from-blue-800 hover:to-sky-700 text-white font-bold text-sm shadow-md shadow-blue-600/20 transition self-start sm:self-auto"
-        >
-          <PlusCircle className="w-4 h-4" />
-          Create New Quiz
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+          <button
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('alawasi-open-add-news-modal'));
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm shadow-md transition cursor-pointer"
+            title="Publish an announcement or exam alert to Batch 99 News Screen"
+          >
+            <Radio className="w-4 h-4 text-slate-950" />
+            <span>+ Broadcast News</span>
+          </button>
+
+          <button
+            onClick={onCreateQuiz}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-700 to-sky-600 hover:from-blue-800 hover:to-sky-700 text-white font-bold text-sm shadow-md shadow-blue-600/20 transition cursor-pointer"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Create New Quiz</span>
+          </button>
+        </div>
       </div>
+
+      {/* Live News Screen with Direct Teacher News Controls */}
+      <AnnouncementsWidget isTeacherInterface={true} />
 
       {/* KPI Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

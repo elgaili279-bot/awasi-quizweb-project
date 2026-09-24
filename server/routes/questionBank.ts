@@ -7,76 +7,118 @@ import { authenticate, optionalAuthenticate, type AuthenticatedRequest } from '.
 
 export const questionBankRouter = Router();
 
-// GET /api/question-bank - Browse searchable questions from published quizzes
+// GET /api/question-bank - Browse questions solved by the user in quiz practice sessions
 questionBankRouter.get('/', optionalAuthenticate, (req: AuthenticatedRequest, res: Response): void => {
   const { subject_id, topic_id, difficulty, type, search, bookmarkedOnly, incorrectOnly } = req.query;
   const user = req.user;
 
-  // Only questions belonging to PUBLISHED quizzes
-  const publishedQuizzes = db.getQuizzes({ status: 'published' });
-  const publishedQuizIds = new Set(publishedQuizzes.map(q => q.id));
-
-  let questions = db.getAllQuestions().filter(q => publishedQuizIds.has(q.quiz_id));
-
-  if (subject_id) {
-    const quizMap = new Map(publishedQuizzes.map(q => [q.id, q]));
-    questions = questions.filter(q => quizMap.get(q.quiz_id)?.subject_id === subject_id);
+  // If unauthenticated or no user, student has not solved questions in quizzes yet
+  if (!user) {
+    res.json({ questions: [], total: 0, totalSolved: 0 });
+    return;
   }
 
-  if (topic_id) {
-    questions = questions.filter(q => q.topic_id === topic_id);
+  // Find all questions the student has solved/answered in any completed quiz attempts
+  const studentAttempts = db.getAttemptsByStudent(user.id);
+  const attemptIds = studentAttempts.map(a => a.id);
+  const studentAnswers = db.getAllStudentAnswers().filter(ans => attemptIds.includes(ans.attempt_id));
+
+  // Build a map of solved questions with performance metrics
+  const solvedQuestionMap = new Map<string, {
+    is_correct: boolean;
+    selected_choice_id: string;
+    attempt_count: number;
+    has_incorrect: boolean;
+    has_correct: boolean;
+  }>();
+
+  studentAnswers.forEach(ans => {
+    const choiceId = ans.selected_choice_ids && ans.selected_choice_ids.length > 0 ? ans.selected_choice_ids[0] : '';
+    const existing = solvedQuestionMap.get(ans.question_id);
+    if (!existing) {
+      solvedQuestionMap.set(ans.question_id, {
+        is_correct: ans.is_correct,
+        selected_choice_id: choiceId,
+        attempt_count: 1,
+        has_incorrect: !ans.is_correct,
+        has_correct: ans.is_correct,
+      });
+    } else {
+      existing.attempt_count += 1;
+      existing.is_correct = ans.is_correct;
+      existing.selected_choice_id = choiceId;
+      if (!ans.is_correct) existing.has_incorrect = true;
+      if (ans.is_correct) existing.has_correct = true;
+    }
+  });
+
+  const allQuestions = db.getAllQuestions();
+  let solvedQuestions = allQuestions.filter(q => solvedQuestionMap.has(q.id));
+
+  const allQuizzes = db.getQuizzes();
+  const quizMap = new Map(allQuizzes.map(q => [q.id, q]));
+
+  if (subject_id && subject_id !== 'all') {
+    solvedQuestions = solvedQuestions.filter(q => {
+      const qz = quizMap.get(q.quiz_id);
+      return q.subject_id === subject_id || qz?.subject_id === subject_id;
+    });
   }
 
-  if (difficulty) {
-    questions = questions.filter(q => q.difficulty === difficulty);
+  if (topic_id && topic_id !== 'all') {
+    solvedQuestions = solvedQuestions.filter(q => q.topic_id === topic_id);
   }
 
-  if (type) {
-    questions = questions.filter(q => q.type === type);
+  if (difficulty && difficulty !== 'all') {
+    solvedQuestions = solvedQuestions.filter(q => q.difficulty === difficulty);
   }
 
-  if (search && typeof search === 'string') {
-    const query = search.toLowerCase();
-    questions = questions.filter(q =>
+  if (type && type !== 'all') {
+    solvedQuestions = solvedQuestions.filter(q => q.type === type);
+  }
+
+  if (search && typeof search === 'string' && search.trim()) {
+    const query = search.toLowerCase().trim();
+    solvedQuestions = solvedQuestions.filter(q =>
       q.prompt.toLowerCase().includes(query) ||
       (q.explanation && q.explanation.toLowerCase().includes(query)) ||
-      (q.learning_point && q.learning_point.toLowerCase().includes(query))
+      (q.learning_point && q.learning_point.toLowerCase().includes(query)) ||
+      (q.clinical_vignette?.chief_complaint && q.clinical_vignette.chief_complaint.toLowerCase().includes(query)) ||
+      (q.clinical_vignette?.history && q.clinical_vignette.history.toLowerCase().includes(query))
     );
   }
 
   // Filter bookmarked
-  let studentBookmarks: string[] = [];
-  if (user) {
-    studentBookmarks = db.getBookmarksByStudent(user.id).map(b => b.question_id);
-    if (bookmarkedOnly === 'true') {
-      const bmSet = new Set(studentBookmarks);
-      questions = questions.filter(q => bmSet.has(q.id));
-    }
+  const studentBookmarks = db.getBookmarksByStudent(user.id).map(b => b.question_id);
+  const bmSet = new Set(studentBookmarks);
+  if (bookmarkedOnly === 'true') {
+    solvedQuestions = solvedQuestions.filter(q => bmSet.has(q.id));
   }
 
   // Filter previously incorrect
-  if (user && incorrectOnly === 'true') {
-    const studentAttempts = db.getAttemptsByStudent(user.id).map(a => a.id);
-    const studentAnswers = db.getAllStudentAnswers().filter(ans => studentAttempts.includes(ans.attempt_id));
-    const incorrectQuestionIds = new Set(studentAnswers.filter(ans => !ans.is_correct).map(ans => ans.question_id));
-    questions = questions.filter(q => incorrectQuestionIds.has(q.id));
+  if (incorrectOnly === 'true') {
+    solvedQuestions = solvedQuestions.filter(q => {
+      const info = solvedQuestionMap.get(q.id);
+      return info?.has_incorrect === true;
+    });
   }
 
   const subjects = db.getSubjects();
   const topics = db.getTopics();
-  const bmSet = new Set(studentBookmarks);
 
-  // Return questions with their associated quiz metadata and choices
-  const formatted = questions.map(q => {
-    const quiz = publishedQuizzes.find(qz => qz.id === q.quiz_id);
-    const subject = quiz ? subjects.find(s => s.id === quiz.subject_id) : null;
+  // Return questions with their associated quiz metadata, student response, and choices
+  const formatted = solvedQuestions.map(q => {
+    const quiz = quizMap.get(q.quiz_id);
+    const subject = quiz ? subjects.find(s => s.id === quiz.subject_id) : subjects.find(s => s.id === q.subject_id);
     const topic = q.topic_id ? topics.find(t => t.id === q.topic_id) : null;
     const rawChoices = db.getChoicesByQuestionId(q.id);
+    const solvedInfo = solvedQuestionMap.get(q.id);
 
     return {
       id: q.id,
       quiz_id: q.quiz_id,
-      quiz_title: quiz?.title || 'Medical Quiz',
+      subject_id: q.subject_id || quiz?.subject_id,
+      quiz_title: quiz?.title || 'Clinical Practice Quiz',
       subject_name: subject?.name || 'General Medical',
       topic_name: topic?.name || null,
       type: q.type,
@@ -88,6 +130,9 @@ questionBankRouter.get('/', optionalAuthenticate, (req: AuthenticatedRequest, re
       learning_point: q.learning_point,
       reference: q.reference,
       is_bookmarked: bmSet.has(q.id),
+      is_incorrect: solvedInfo ? !solvedInfo.is_correct : false,
+      user_selected_choice_id: solvedInfo?.selected_choice_id,
+      attempt_count: solvedInfo?.attempt_count || 1,
       choices: rawChoices.map(c => ({
         id: c.id,
         choice_text: c.choice_text,
@@ -97,7 +142,11 @@ questionBankRouter.get('/', optionalAuthenticate, (req: AuthenticatedRequest, re
     };
   });
 
-  res.json({ questions: formatted, total: formatted.length });
+  res.json({
+    questions: formatted,
+    total: formatted.length,
+    totalSolved: solvedQuestionMap.size,
+  });
 });
 
 // POST /api/bookmarks/toggle

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, User, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, User, Lock, CheckCircle2, AlertCircle, RefreshCw, GraduationCap, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
@@ -9,7 +9,8 @@ interface ProfileModalProps {
 }
 
 export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, switchRole } = useAuth();
+  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [fullName, setFullName] = useState(user?.full_name || '');
@@ -17,9 +18,10 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
 
   // Student specific
   const studentProfile = user?.role === 'student' ? (user.profile as any) : null;
-  const [medicalSchoolYear, setMedicalSchoolYear] = useState(studentProfile?.medical_school_year || 'MS2');
-  const [university, setUniversity] = useState(studentProfile?.university || '');
-  const [targetExam, setTargetExam] = useState(studentProfile?.target_exam || 'USMLE Step 1');
+  const [medicalSchoolYear, setMedicalSchoolYear] = useState(studentProfile?.medical_school_year || 'Batch 99 Member');
+  const [studentId, setStudentId] = useState(studentProfile?.student_id || '');
+  const [university, setUniversity] = useState(studentProfile?.university || 'University of Khartoum');
+  const [academicFocus, setAcademicFocus] = useState(studentProfile?.academic_focus || 'Batch 99 Medical Curriculum');
   const [bio, setBio] = useState(user?.profile?.bio || '');
 
   // Teacher specific
@@ -49,7 +51,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
         display_name: displayName.trim(),
         medical_school_year: medicalSchoolYear,
         university: university.trim(),
-        target_exam: targetExam,
+        academic_focus: academicFocus,
         title_specialty: titleSpecialty.trim(),
         institution: institution.trim(),
         bio: bio.trim(),
@@ -100,15 +102,42 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">Account Settings</h2>
-              <p className="text-xs text-slate-500">{user.email} • {user.role.toUpperCase()}</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-xs text-slate-500">{user.email}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-amber-300 border border-blue-200 dark:border-blue-800">
+                  {user.role === 'teacher' ? 'Faculty / Teacher' : user.role.toUpperCase()}
+                </span>
+              </div>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={async () => {
+                try {
+                  setIsSwitchingRole(true);
+                  const nextRole = user.role === 'teacher' ? 'student' : 'teacher';
+                  await switchRole(nextRole);
+                  setSuccess(`Switched account mode to ${nextRole === 'teacher' ? 'Faculty / Teacher' : 'Student'}!`);
+                } catch (err: any) {
+                  setError(err.message || 'Failed to switch role');
+                } finally {
+                  setIsSwitchingRole(false);
+                }
+              }}
+              disabled={isSwitchingRole}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition shadow-xs cursor-pointer bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700"
+              title={user.role === 'teacher' ? 'Switch to Student View' : 'Switch to Teacher / Faculty Workspace'}
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSwitchingRole ? 'animate-spin' : ''}`} />
+              <span>{user.role === 'teacher' ? 'Switch to Student' : 'Switch to Teacher'}</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Tab buttons */}
@@ -179,35 +208,31 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               <>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Medical Year</label>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Academic Batch</label>
                     <select
                       value={medicalSchoolYear}
                       onChange={(e) => setMedicalSchoolYear(e.target.value)}
                       className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white"
                     >
-                      <option value="MS1">MS1</option>
-                      <option value="MS2">MS2</option>
-                      <option value="MS3">MS3</option>
-                      <option value="MS4">MS4</option>
-                      <option value="Intern">Medical Intern (PGY-1)</option>
-                      <option value="Resident">Resident Physician</option>
+                      <option value="Batch 99 Member">Batch 99 Member</option>
+                      <option value="Batch 99 Student">Batch 99 Student</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Target Exam</label>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Academic Focus</label>
                     <input
                       type="text"
-                      value={targetExam}
-                      onChange={(e) => setTargetExam(e.target.value)}
-                      placeholder="e.g. USMLE Step 1"
+                      value={academicFocus}
+                      onChange={(e) => setAcademicFocus(e.target.value)}
+                      placeholder="e.g. Batch 99 Medical Modules"
                       className="w-full px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">University / Hospital</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Faculty &amp; University</label>
                   <input
                     type="text"
                     value={university}

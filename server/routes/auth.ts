@@ -2,7 +2,7 @@ import express from 'express';
 import type { Response } from 'express';
 const Router = express.Router;
 import crypto from 'crypto';
-import { db, type User } from '../db.ts';
+import { db, type User, type StudentProfile, type TeacherProfile } from '../db.ts';
 import { hashPassword, verifyPassword, generateToken, authenticate, type AuthenticatedRequest } from '../auth.ts';
 
 export const authRouter = Router();
@@ -19,71 +19,115 @@ function sanitizeUser(user: User) {
   return { ...safe, profile };
 }
 
+// Authorized teacher registration code
+const TEACHER_REGISTRATION_CODE = '090838';
+
 // POST /api/auth/register
 authRouter.post('/register', (req, res): void => {
   const {
     role,
+    firstName,
+    lastName,
+    fullName: rawFullName,
+    displayName: rawDisplayName,
     email,
     password,
     confirmPassword,
-    fullName,
-    displayName,
     // Student fields
-    medicalSchoolYear,
-    university,
-    targetExam,
+    studentId,
+    academicYear,
     // Teacher fields
-    titleSpecialty,
-    institution,
+    teacherRegistrationCode,
+    teacherCode,
   } = req.body;
 
-  // Validation
+  const effectiveTeacherCode = teacherRegistrationCode || teacherCode || req.body.code;
+
+  // Role validation
   if (!role || !['student', 'teacher'].includes(role)) {
     res.status(400).json({ error: 'Role must be either student or teacher.' });
     return;
   }
 
+  // Name extraction & validation
+  const effectiveFirstName = firstName ? String(firstName).trim() : '';
+  const effectiveLastName = lastName ? String(lastName).trim() : '';
+  let fullName = rawFullName ? String(rawFullName).trim() : `${effectiveFirstName} ${effectiveLastName}`.trim();
+  let displayName = rawDisplayName ? String(rawDisplayName).trim() : effectiveFirstName || fullName;
+
+  if (role === 'student' || role === 'teacher') {
+    if (!effectiveFirstName && !rawFullName) {
+      res.status(400).json({ error: 'First name is required.' });
+      return;
+    }
+    if (!effectiveLastName && !rawFullName) {
+      res.status(400).json({ error: 'Last name is required.' });
+      return;
+    }
+  }
+
+  if (!fullName || fullName.length < 2) {
+    res.status(400).json({ error: 'Full name is required (at least 2 characters).' });
+    return;
+  }
+
+  // Email validation
   if (!email || typeof email !== 'string' || !email.includes('@')) {
     res.status(400).json({ error: 'A valid email address is required.' });
     return;
   }
 
-  if (!fullName || typeof fullName !== 'string' || fullName.trim().length < 2) {
-    res.status(400).json({ error: 'Full name is required (at least 2 characters).' });
+  // Password validation
+  if (!password || typeof password !== 'string' || password.length < 6) {
+    res.status(400).json({ error: 'Password must be at least 6 characters long.' });
     return;
   }
 
-  if (!displayName || typeof displayName !== 'string' || displayName.trim().length < 2) {
-    res.status(400).json({ error: 'Display name is required (at least 2 characters).' });
-    return;
-  }
-
-  if (!password || typeof password !== 'string' || password.length < 8) {
-    res.status(400).json({ error: 'Password must be at least 8 characters long.' });
-    return;
-  }
-
-  if (password !== confirmPassword) {
+  if (confirmPassword !== undefined && password !== confirmPassword) {
     res.status(400).json({ error: 'Passwords do not match.' });
     return;
   }
 
-  // Check uniqueness
-  const existingUser = db.findUserByEmail(email.trim());
-  if (existingUser) {
+  // Check unique email
+  const existingEmail = db.findUserByEmail(email.trim());
+  if (existingEmail) {
     res.status(409).json({ error: 'An account with this email address already exists.' });
     return;
   }
 
-  // Role-specific validation
-  if (role === 'student' && !medicalSchoolYear) {
-    res.status(400).json({ error: 'Medical school year is required for student registration.' });
-    return;
+  // Student specific validation
+  if (role === 'student') {
+    const cleanStudentId = studentId ? String(studentId).trim() : '';
+    if (!cleanStudentId) {
+      res.status(400).json({ error: 'Student ID is required.' });
+      return;
+    }
+
+    const existingStudent = db.findStudentByStudentId(cleanStudentId);
+    if (existingStudent) {
+      res.status(409).json({ error: 'A student account with this Student ID already exists.' });
+      return;
+    }
+
+    const cleanAcademicYear = academicYear ? String(academicYear).trim() : 'Batch 99';
+    if (!cleanAcademicYear) {
+      res.status(400).json({ error: 'Academic Year is required.' });
+      return;
+    }
   }
 
-  if (role === 'teacher' && (!titleSpecialty || !institution)) {
-    res.status(400).json({ error: 'Academic title/specialty and institution are required for teacher registration.' });
-    return;
+  // Teacher specific validation
+  if (role === 'teacher') {
+    const cleanCode = effectiveTeacherCode ? String(effectiveTeacherCode).trim() : '';
+    if (!cleanCode) {
+      res.status(400).json({ error: 'Teacher Registration Code is required.' });
+      return;
+    }
+
+    if (cleanCode !== TEACHER_REGISTRATION_CODE) {
+      res.status(403).json({ error: 'Invalid Teacher Registration Code. Please enter the authorized faculty registration code provided by the administrator.' });
+      return;
+    }
   }
 
   const { hash, salt } = hashPassword(password);
@@ -95,8 +139,8 @@ authRouter.post('/register', (req, res): void => {
     password_hash: hash,
     salt: salt,
     role,
-    full_name: fullName.trim(),
-    display_name: displayName.trim(),
+    full_name: fullName,
+    display_name: displayName,
     status: 'active',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -107,16 +151,17 @@ authRouter.post('/register', (req, res): void => {
   if (role === 'student') {
     db.setStudentProfile({
       user_id: userId,
-      medical_school_year: medicalSchoolYear || 'MS1',
-      university: university?.trim() || '',
-      target_exam: targetExam?.trim() || 'USMLE Step 1',
+      student_id: String(studentId).trim(),
+      academic_year: (academicYear ? String(academicYear).trim() : 'Batch 99'),
+      medical_school_year: 'Batch 99',
+      university: 'Faculty of Medicine, University of Khartoum',
     });
   } else if (role === 'teacher') {
     db.setTeacherProfile({
       user_id: userId,
-      title_specialty: titleSpecialty.trim(),
-      institution: institution.trim(),
-      verified: true, // auto-verified for registered teacher
+      title_specialty: 'Faculty Educator',
+      institution: 'Faculty of Medicine, University of Khartoum',
+      verified: true,
     });
   }
 
@@ -183,12 +228,20 @@ authRouter.put('/profile', authenticate, (req: AuthenticatedRequest, res: Respon
   const updatedUser = db.updateUser(user.id, updates) || user;
 
   if (user.role === 'student') {
-    const existing = db.getStudentProfile(user.id) || { user_id: user.id, medical_school_year: 'MS1' };
+    const existing: StudentProfile = db.getStudentProfile(user.id) || {
+      user_id: user.id,
+      student_id: '',
+      academic_year: 'Batch 99',
+      medical_school_year: 'Batch 99 Member',
+      university: 'Faculty of Medicine, University of Khartoum',
+      academic_focus: 'Batch 99 Medical Curriculum',
+    };
     db.setStudentProfile({
       ...existing,
       medical_school_year: medicalSchoolYear || existing.medical_school_year,
       university: university !== undefined ? university.trim() : existing.university,
       bio: bio !== undefined ? bio.trim() : existing.bio,
+      academic_focus: req.body.academicFocus !== undefined ? req.body.academicFocus.trim() : existing.academic_focus,
       target_exam: targetExam !== undefined ? targetExam.trim() : existing.target_exam,
     });
   } else if (user.role === 'teacher') {
@@ -308,3 +361,25 @@ authRouter.post('/reset-password', (req, res): void => {
 
   res.json({ message: 'Password has been successfully reset. You can now login.' });
 });
+
+// POST /api/auth/switch-role - Toggle role between student and teacher for testing/management
+authRouter.post('/switch-role', authenticate, (req: AuthenticatedRequest, res: Response): void => {
+  const targetRole = req.body.role === 'student' ? 'student' : 'teacher';
+  const updatedUser = db.updateUser(req.user!.id, { role: targetRole });
+  if (!updatedUser) {
+    res.status(404).json({ error: 'User not found.' });
+    return;
+  }
+  if (targetRole === 'teacher' && !db.getTeacherProfile(req.user!.id)) {
+    db.setTeacherProfile({
+      user_id: req.user!.id,
+      title_specialty: 'Academic Faculty & Assessment Coordinator',
+      institution: 'Batch 99 Academic Committee',
+      bio: 'Faculty & Assessment Coordinator',
+      verified: true,
+    });
+  }
+  const token = generateToken(updatedUser);
+  res.json({ user: updatedUser, token, message: `Switched to ${targetRole} mode successfully.` });
+});
+

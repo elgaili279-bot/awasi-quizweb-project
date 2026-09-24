@@ -90,6 +90,12 @@ export const api = {
       body: JSON.stringify(payload),
     }),
 
+  switchRole: (role: 'student' | 'teacher') =>
+    request<{ message: string; token: string; user: User }>('/api/auth/switch-role', {
+      method: 'POST',
+      body: JSON.stringify({ role }),
+    }),
+
   // --- SUBJECTS ---
   getSubjects: () => request<{ subjects: Subject[] }>('/api/subjects'),
   getSubjectById: (id: string) => request<{ subject: Subject }>('/api/subjects/' + id),
@@ -103,6 +109,8 @@ export const api = {
   getQuizzes: (params?: {
     subject_id?: string;
     topic_id?: string;
+    specialty?: string;
+    medical_specialty?: string;
     difficulty?: string;
     search?: string;
     myQuizzes?: boolean;
@@ -111,6 +119,9 @@ export const api = {
     const query = new URLSearchParams();
     if (params?.subject_id) query.set('subject_id', params.subject_id);
     if (params?.topic_id) query.set('topic_id', params.topic_id);
+    if (params?.specialty || params?.medical_specialty) {
+      query.set('specialty', params.specialty || params.medical_specialty || '');
+    }
     if (params?.difficulty) query.set('difficulty', params.difficulty);
     if (params?.search) query.set('search', params.search);
     if (params?.myQuizzes) query.set('myQuizzes', 'true');
@@ -269,10 +280,223 @@ export const api = {
     }),
 
   // --- LEADERBOARD ---
-  getLeaderboard: (subject_id?: string) => {
-    const query = subject_id ? `?subject_id=${subject_id}` : '';
-    return request<{ leaderboard: LeaderboardEntry[]; total_participants: number }>(`/api/leaderboard${query}`);
+  getLeaderboard: (subject_id?: string, show_all?: boolean) => {
+    const query = new URLSearchParams();
+    if (subject_id) query.set('subject_id', subject_id);
+    if (show_all) query.set('show_all', 'true');
+    const qStr = query.toString() ? `?${query.toString()}` : '';
+    return request<{
+      leaderboard: LeaderboardEntry[];
+      top_5: LeaderboardEntry[];
+      user_private_ranking: any;
+      total_participants: number;
+      subject_id: string | null;
+      subject_name: string;
+    }>(`/api/leaderboard${qStr}`);
   },
+
+  getSubjectLeaderboardsSummary: () =>
+    request<{
+      subject_leaderboards: Array<{
+        subject_id: string;
+        subject_name: string;
+        icon: string;
+        top_5: Array<{
+          rank: number;
+          user_id: string;
+          display_name: string;
+          medical_school_year: string;
+          quizzes_completed: number;
+          total_points: number;
+        }>;
+        total_participants: number;
+        user_private_ranking: { rank: number; total_points: number } | null;
+      }>;
+    }>('/api/leaderboard/subjects-summary'),
+
+  // --- COMMUNITY ---
+  getCommunityPosts: (params?: { subject_id?: string; category?: string; search?: string; sort?: string }) => {
+    const query = new URLSearchParams();
+    if (params?.subject_id) query.set('subject_id', params.subject_id);
+    if (params?.category) query.set('category', params.category);
+    if (params?.search) query.set('search', params.search);
+    if (params?.sort) query.set('sort', params.sort);
+    const qStr = query.toString() ? `?${query.toString()}` : '';
+    return request<{ posts: any[] }>(`/api/community/posts${qStr}`);
+  },
+
+  getCommunityPostById: (id: string) =>
+    request<{ post: any }>(`/api/community/posts/${id}`),
+
+  createCommunityPost: (payload: {
+    title: string;
+    body: string;
+    subject_id?: string;
+    category?: string;
+    tags?: string[];
+    question_id?: string;
+  }) =>
+    request<{ post: any; message: string }>('/api/community/posts', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  createCommunityReply: (postId: string, body: string) =>
+    request<{ reply: any; message: string }>(`/api/community/posts/${postId}/reply`, {
+      method: 'POST',
+      body: JSON.stringify({ body }),
+    }),
+
+  toggleUpvotePost: (postId: string) =>
+    request<{ upvoted: boolean; count: number }>(`/api/community/posts/${postId}/upvote`, {
+      method: 'POST',
+    }),
+
+  toggleUpvoteReply: (replyId: string) =>
+    request<{ upvoted: boolean; count: number }>(`/api/community/replies/${replyId}/upvote`, {
+      method: 'POST',
+    }),
+
+  pinCommunityPost: (postId: string, is_pinned: boolean) =>
+    request<{ success: boolean; message: string }>(`/api/community/posts/${postId}/pin`, {
+      method: 'PUT',
+      body: JSON.stringify({ is_pinned }),
+    }),
+
+  verifyFacultyReply: (replyId: string, is_verified: boolean) =>
+    request<{ success: boolean; message: string }>(`/api/community/replies/${replyId}/verify`, {
+      method: 'PUT',
+      body: JSON.stringify({ is_verified }),
+    }),
+
+  deleteCommunityPost: (id: string) =>
+    request<{ success: boolean; message: string }>(`/api/community/posts/${id}`, {
+      method: 'DELETE',
+    }),
+
+  // --- WEAK POINTS (ACTIVE MISTAKE VAULT) ---
+  getWeakPoints: () =>
+    request<{
+      weak_points: any[];
+      total_count: number;
+      active_count: number;
+      mastered_count: number;
+    }>('/api/weak-points'),
+
+  toggleWeakPointMastery: (question_id: string, is_mastered: boolean) =>
+    request<{ success: boolean; message: string }>(`/api/weak-points/${question_id}/master`, {
+      method: 'POST',
+      body: JSON.stringify({ is_mastered }),
+    }),
+
+  retryWeakPointQuestion: (question_id: string, selected_choice_ids: string[]) =>
+    request<{
+      is_correct: boolean;
+      correct_choice_ids: string[];
+      explanation: string;
+      learning_point: string;
+      reference: string;
+      choices: any[];
+    }>(`/api/weak-points/${question_id}/retry`, {
+      method: 'POST',
+      body: JSON.stringify({ selected_choice_ids }),
+    }),
+
+  deleteWeakPoint: (question_id: string) =>
+    request<{ success: boolean; message: string }>(`/api/weak-points/${question_id}`, {
+      method: 'DELETE',
+    }),
+
+  // --- ANNOUNCEMENTS ---
+  getAnnouncements: (params?: { include_expired?: boolean }) => {
+    const qStr = params?.include_expired ? '?include_expired=true' : '';
+    return request<{
+      announcements: any[];
+      archived?: any[];
+      total_active?: number;
+      total_archived?: number;
+    }>(`/api/announcements${qStr}`);
+  },
+
+  createAnnouncement: (payload: {
+    title: string;
+    content: string;
+    category?: string;
+    priority?: string;
+    is_pinned?: boolean;
+    expires_at?: string | null;
+  }) =>
+    request<{ announcement: any; message: string }>('/api/announcements', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  updateAnnouncement: (id: string, payload: {
+    title?: string;
+    content?: string;
+    category?: string;
+    priority?: string;
+    is_pinned?: boolean;
+    expires_at?: string | null;
+  }) =>
+    request<{ announcement: any; message: string }>(`/api/announcements/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    }),
+
+  reactivateAnnouncement: (id: string, payload?: { days?: number; new_expires_at?: string }) =>
+    request<{ announcement: any; message: string }>(`/api/announcements/${id}/reactivate`, {
+      method: 'POST',
+      body: JSON.stringify(payload || {}),
+    }),
+
+  deleteAnnouncement: (id: string) =>
+    request<{ success: boolean; message: string }>(`/api/announcements/${id}`, {
+      method: 'DELETE',
+    }),
+
+  syncAnnouncements: (announcements: any[]) =>
+    request<{ announcements: any[]; message: string }>('/api/announcements/sync', {
+      method: 'POST',
+      body: JSON.stringify({ announcements }),
+    }),
+
+  // --- TEACHER & BATCH ANALYTICS ---
+  getBatchAnalytics: () =>
+    request<{
+      total_students_active: number;
+      total_attempts_recorded: number;
+      overall_batch_average: number;
+      batch_level_weak_areas: any[];
+      frequently_missed_questions: any[];
+      subject_breakdowns: any[];
+      senior_review_group_recommendations: any[];
+    }>('/api/teacher/batch-analytics'),
+
+  getStudentPerformanceCohorts: () =>
+    request<{ cohorts: any[] }>('/api/teacher/student-performance-cohorts'),
+
+  getRescueGroups: () =>
+    request<{ rescue_groups: any[] }>('/api/teacher/rescue-groups'),
+
+  createRescueGroup: (payload: {
+    title: string;
+    description?: string;
+    subject_id?: string;
+    student_ids: string[];
+    meeting_schedule?: string;
+    notes?: string;
+  }) =>
+    request<{ group: any; message: string }>('/api/teacher/rescue-groups', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  sendSupportMessage: (payload: { student_id: string; title?: string; message: string }) =>
+    request<{ success: boolean; message: string }>('/api/teacher/send-support-message', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
 
   // --- ADMIN ---
   getAdminOverview: () =>
@@ -331,5 +555,15 @@ export const api = {
   seedSampleQuiz: () =>
     request<{ message: string; quiz: any }>('/api/admin/seed-sample-quiz', {
       method: 'POST',
+    }),
+
+  // --- GEMINI ACADEMIC CHATBOT & SITE GUIDE ---
+  sendGeminiChatMessage: (payload: {
+    message: string;
+    history?: Array<{ role: 'user' | 'model' | 'assistant'; content: string }>;
+  }) =>
+    request<{ reply: string; modelUsed: string }>('/api/gemini/message', {
+      method: 'POST',
+      body: JSON.stringify(payload),
     }),
 };

@@ -276,7 +276,7 @@ export const AdminPortal: React.FC = () => {
                     Demonstration & Verification Curriculum
                   </h4>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Load a verified USMLE Step 2 CK emergency & acute cardiology examination with board-style clinical vignettes.
+                    Load a verified Batch 99 Clinical Case examination with clinical vignettes and structured rationales.
                   </p>
                 </div>
                 <button
@@ -291,7 +291,7 @@ export const AdminPortal: React.FC = () => {
                   }}
                   className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl shadow-sm transition whitespace-nowrap"
                 >
-                  Seed High-Yield Board Exam
+                  Seed Batch 99 Clinical Exam
                 </button>
               </div>
             </>

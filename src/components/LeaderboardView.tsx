@@ -129,7 +129,7 @@ export const LeaderboardView: React.FC = () => {
           Evidence-Based Point Formula
         </div>
         <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-          Mastery points are awarded from real scored attempts. Points scale with board difficulty multipliers (USMLE Step 2: 1.5x, Step 1: 1.4x) plus clinical precision bonuses for ≥90% accuracy.
+          Mastery points are awarded from verified scored attempts. Points scale with curriculum difficulty multipliers (Clinical Case: 1.5x, Curriculum Core: 1.4x) plus clinical precision bonuses for ≥90% accuracy.
         </p>
       </div>
 

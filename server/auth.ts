@@ -114,7 +114,13 @@ export function requireRole(...allowedRoles: Array<'student' | 'teacher' | 'admi
       res.status(401).json({ error: 'Authentication required.' });
       return;
     }
-    if (!allowedRoles.includes(req.user.role)) {
+    const userRole = (req.user.role || '').toLowerCase();
+    const normalizedAllowed = allowedRoles.map(r => r.toLowerCase());
+    const isAllowed = 
+      normalizedAllowed.includes(userRole) || 
+      (normalizedAllowed.includes('teacher') && (userRole === 'faculty' || userRole === 'educator'));
+
+    if (!isAllowed) {
       res.status(403).json({
         error: `Access denied. Role '${req.user.role}' is not authorized to perform this action.`,
       });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Search,
   Filter,
@@ -11,17 +11,150 @@ import {
   Flame,
   Stethoscope,
   PlusCircle,
-  AlertCircle
+  AlertCircle,
+  Target,
+  Building2,
+  Sparkles,
+  Compass,
+  GraduationCap,
+  ShieldCheck,
+  CheckCircle2,
+  Microscope,
+  Scan,
+  Eye,
+  Brain,
+  Bug,
+  Scale,
+  Activity,
+  X,
+  Layers,
+  SlidersHorizontal
 } from 'lucide-react';
 import { Quiz, Subject } from '../types';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { AlawasiLogo } from './AlawasiLogo';
+import { AnnouncementsWidget } from './AnnouncementsWidget';
 
 interface QuizCatalogProps {
   onSelectQuiz: (quizId: string) => void;
   onNavigateToTeacher: () => void;
 }
+
+// Medical Specialty metadata for styling and icons
+export interface SpecialtyConfig {
+  id: string;
+  name: string;
+  icon: React.ComponentType<{ className?: string }>;
+  colorBg: string;
+  colorBorder: string;
+  colorText: string;
+  badgeBg: string;
+  description: string;
+}
+
+export const MEDICAL_SPECIALTIES: SpecialtyConfig[] = [
+  {
+    id: 'Pathology',
+    name: 'Pathology',
+    icon: Microscope,
+    colorBg: 'bg-purple-50 dark:bg-purple-950/40',
+    colorBorder: 'border-purple-200 dark:border-purple-800',
+    colorText: 'text-purple-700 dark:text-purple-300',
+    badgeBg: 'bg-purple-100 text-purple-900 dark:bg-purple-900/60 dark:text-purple-200 border-purple-300 dark:border-purple-700',
+    description: 'Cellular adaptation, neoplasia hallmarks, histopathology, and hemodynamic disorders'
+  },
+  {
+    id: 'Radiology',
+    name: 'Radiology',
+    icon: Scan,
+    colorBg: 'bg-sky-50 dark:bg-sky-950/40',
+    colorBorder: 'border-sky-200 dark:border-sky-800',
+    colorText: 'text-sky-700 dark:text-sky-300',
+    badgeBg: 'bg-sky-100 text-sky-900 dark:bg-sky-900/60 dark:text-sky-200 border-sky-300 dark:border-sky-700',
+    description: 'Plain radiographs, emergency trauma CT, MRI neuro-imaging, and ultrasound'
+  },
+  {
+    id: 'Dermatology',
+    name: 'Dermatology',
+    icon: ShieldCheck,
+    colorBg: 'bg-fuchsia-50 dark:bg-fuchsia-950/40',
+    colorBorder: 'border-fuchsia-200 dark:border-fuchsia-800',
+    colorText: 'text-fuchsia-700 dark:text-fuchsia-300',
+    badgeBg: 'bg-fuchsia-100 text-fuchsia-900 dark:bg-fuchsia-900/60 dark:text-fuchsia-200 border-fuchsia-300 dark:border-fuchsia-700',
+    description: 'Primary/secondary lesions, papulosquamous diseases, and dermatological emergencies'
+  },
+  {
+    id: 'Infectious Diseases',
+    name: 'Infectious Diseases',
+    icon: Bug,
+    colorBg: 'bg-teal-50 dark:bg-teal-950/40',
+    colorBorder: 'border-teal-200 dark:border-teal-800',
+    colorText: 'text-teal-700 dark:text-teal-300',
+    badgeBg: 'bg-teal-100 text-teal-900 dark:bg-teal-900/60 dark:text-teal-200 border-teal-300 dark:border-teal-700',
+    description: 'Endemic malaria, tropical fevers, antimicrobial stewardship, and sepsis'
+  },
+  {
+    id: 'Ophthalmology',
+    name: 'Ophthalmology',
+    icon: Eye,
+    colorBg: 'bg-cyan-50 dark:bg-cyan-950/40',
+    colorBorder: 'border-cyan-200 dark:border-cyan-800',
+    colorText: 'text-cyan-700 dark:text-cyan-300',
+    badgeBg: 'bg-cyan-100 text-cyan-900 dark:bg-cyan-900/60 dark:text-cyan-200 border-cyan-300 dark:border-cyan-700',
+    description: 'Red eye differential, acute glaucoma, ocular trauma, and fundoscopy'
+  },
+  {
+    id: 'ENT',
+    name: 'ENT (Otorhinolaryngology)',
+    icon: Activity,
+    colorBg: 'bg-pink-50 dark:bg-pink-950/40',
+    colorBorder: 'border-pink-200 dark:border-pink-800',
+    colorText: 'text-pink-700 dark:text-pink-300',
+    badgeBg: 'bg-pink-100 text-pink-900 dark:bg-pink-900/60 dark:text-pink-200 border-pink-300 dark:border-pink-700',
+    description: 'Otology, rhinosinusitis, epistaxis, and upper airway obstruction'
+  },
+  {
+    id: 'Psychiatry & Neurology',
+    name: 'Psychiatry & Neurology',
+    icon: Brain,
+    colorBg: 'bg-indigo-50 dark:bg-indigo-950/40',
+    colorBorder: 'border-indigo-200 dark:border-indigo-800',
+    colorText: 'text-indigo-700 dark:text-indigo-300',
+    badgeBg: 'bg-indigo-100 text-indigo-900 dark:bg-indigo-900/60 dark:text-indigo-200 border-indigo-300 dark:border-indigo-700',
+    description: 'Mood disorders, schizophrenia, psychosis, psychopharmacology, and neurology'
+  },
+  {
+    id: 'Medical Ethics',
+    name: 'Medical Ethics',
+    icon: Scale,
+    colorBg: 'bg-slate-50 dark:bg-slate-900',
+    colorBorder: 'border-slate-200 dark:border-slate-800',
+    colorText: 'text-slate-700 dark:text-slate-300',
+    badgeBg: 'bg-slate-200 text-slate-900 dark:bg-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700',
+    description: 'Informed consent, medical autonomy, beneficence, and medico-legal duties'
+  },
+  {
+    id: 'Toxicology & Forensic',
+    name: 'Toxicology & Forensic',
+    icon: Target,
+    colorBg: 'bg-violet-50 dark:bg-violet-950/40',
+    colorBorder: 'border-violet-200 dark:border-violet-800',
+    colorText: 'text-violet-700 dark:text-violet-300',
+    badgeBg: 'bg-violet-100 text-violet-900 dark:bg-violet-900/60 dark:text-violet-200 border-violet-300 dark:border-violet-700',
+    description: 'Acute clinical toxidromes, overdose protocols, and forensic traumatology'
+  },
+  {
+    id: 'Community Medicine',
+    name: 'Community Medicine',
+    icon: Users,
+    colorBg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    colorBorder: 'border-emerald-200 dark:border-emerald-800',
+    colorText: 'text-emerald-700 dark:text-emerald-300',
+    badgeBg: 'bg-emerald-100 text-emerald-900 dark:bg-emerald-900/60 dark:text-emerald-200 border-emerald-300 dark:border-emerald-700',
+    description: 'Epidemiology, public health, biostatistics, primary health care, and disease control'
+  }
+];
 
 export const QuizCatalog: React.FC<QuizCatalogProps> = ({ onSelectQuiz, onNavigateToTeacher }) => {
   const { user, openAuthModal } = useAuth();
@@ -30,11 +163,12 @@ export const QuizCatalog: React.FC<QuizCatalogProps> = ({ onSelectQuiz, onNaviga
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters
+  // Filters & Sorting state
   const [search, setSearch] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState('all');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
-  const [sortBy, setSortBy] = useState('newest');
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>('all');
+  const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('newest');
 
   const fetchCatalogData = async () => {
     try {
@@ -43,6 +177,7 @@ export const QuizCatalog: React.FC<QuizCatalogProps> = ({ onSelectQuiz, onNaviga
       const [quizzesRes, subjectsRes] = await Promise.all([
         api.getQuizzes({
           subject_id: selectedSubject === 'all' ? undefined : selectedSubject,
+          specialty: selectedSpecialty === 'all' ? undefined : selectedSpecialty,
           difficulty: selectedDifficulty === 'all' ? undefined : selectedDifficulty,
           search: search.trim() || undefined,
           sort: sortBy as any
@@ -60,123 +195,177 @@ export const QuizCatalog: React.FC<QuizCatalogProps> = ({ onSelectQuiz, onNaviga
 
   useEffect(() => {
     fetchCatalogData();
-  }, [selectedSubject, selectedDifficulty, sortBy]);
+  }, [selectedSpecialty, selectedSubject, selectedDifficulty, sortBy]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     fetchCatalogData();
   };
 
+  const handleResetFilters = () => {
+    setSearch('');
+    setSelectedSpecialty('all');
+    setSelectedSubject('all');
+    setSelectedDifficulty('all');
+    setSortBy('newest');
+  };
+
+  // Compute counts per medical specialty across loaded or available quizzes
+  const specialtyCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    quizzes.forEach(q => {
+      const spec = q.medical_specialty || 'General Medicine';
+      counts[spec] = (counts[spec] || 0) + 1;
+    });
+    return counts;
+  }, [quizzes]);
+
   const getDifficultyBadge = (difficulty: string) => {
     switch (difficulty) {
-      case 'USMLE Step 1':
+      case 'Curriculum Core':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-            USMLE Step 1
+          <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 border border-blue-300 dark:border-blue-800">
+            Curriculum Core
           </span>
         );
-      case 'USMLE Step 2 CK':
+      case 'Clinical Case':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
-            USMLE Step 2 CK
+          <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+            Clinical Case
           </span>
         );
       case 'Advanced':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
-            Advanced
+          <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
+            Advanced Clinical
           </span>
         );
       case 'Intermediate':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 border border-blue-300 dark:border-blue-800">
+          <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-300 border border-sky-300 dark:border-sky-800">
             Intermediate
           </span>
         );
       default:
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+          <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
             Foundational
           </span>
         );
     }
   };
 
+  const getSpecialtyBadge = (specialtyName?: string) => {
+    if (!specialtyName) return null;
+    const found = MEDICAL_SPECIALTIES.find(
+      s => s.id.toLowerCase() === specialtyName.toLowerCase() || s.name.toLowerCase() === specialtyName.toLowerCase()
+    );
+    const Icon = found?.icon || Stethoscope;
+    const badgeStyle = found?.badgeBg || 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700';
+
+    return (
+      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-bold border shadow-2xs ${badgeStyle}`}>
+        <Icon className="w-3.5 h-3.5 shrink-0" />
+        <span>{found?.name || specialtyName}</span>
+      </span>
+    );
+  };
+
+  const activeFilterCount = (selectedSpecialty !== 'all' ? 1 : 0) +
+    (selectedSubject !== 'all' ? 1 : 0) +
+    (selectedDifficulty !== 'all' ? 1 : 0) +
+    (search.trim() ? 1 : 0) +
+    (sortBy !== 'newest' ? 1 : 0);
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
-      {/* Alawasi Official Hero Banner with Blueprint Grid & New Logo */}
-      <div className="relative overflow-hidden rounded-3xl alawasi-blueprint-grid text-white p-6 sm:p-10 lg:p-12 shadow-2xl border border-blue-400/30">
-        {/* Radial highlight matching brand poster */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-950/80 rounded-full blur-2xl pointer-events-none" />
+      {/* Official Live Announcements & Academic Alerts */}
+      <AnnouncementsWidget />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column: Brand description & actions */}
-          <div className="lg:col-span-7 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-amber-300 text-xs font-bold uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              الدفعة 99 · كلية الطب جامعة الخرطوم
-            </div>
-
-            <div className="space-y-2">
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-                AWASI <span className="text-amber-400">QUIZWEB</span> PLATFORM
-              </h1>
-              <p className="text-sky-100 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed font-normal">
-                Board-style medical question bank, active recall examinations, and evidence-based rationale crafted for medical students and clinicians.
-              </p>
-            </div>
-
-            <div className="pt-2 flex flex-wrap items-center gap-3">
-              {user?.role === 'teacher' || user?.role === 'admin' ? (
-                <button
-                  onClick={onNavigateToTeacher}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition shadow-lg shadow-amber-400/25"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  Author New Medical Quiz
-                </button>
-              ) : !user ? (
-                <button
-                  onClick={() => openAuthModal('register-student')}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm transition shadow-lg shadow-amber-400/25"
-                >
-                  Join as Medical Student
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              ) : null}
-
-              {/* Social / Accreditation handle from the official image */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-sky-950/70 border border-sky-400/30 text-xs font-bold text-sky-200">
-                <span className="text-amber-400 font-black">ALAWASI</span>
-                <span className="text-white/40">|</span>
-                <span>UofK B99</span>
+      {/* ======================================================== */}
+      {/* 1. MEDICAL SPECIALTY STUDY SESSION ORGANIZER BAR         */}
+      {/* ======================================================== */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-amber-400">
+                <BookOpen className="w-4 h-4" />
               </div>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                Explore Quizzes
+              </h2>
             </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Filter by 4th-year curriculum discipline (e.g. Pathology, Radiology, ENT, Dermatology, Ophthalmology, Psychiatry, Forensic Medicine) to streamline your revision.
+            </p>
           </div>
 
-          {/* Right Column: High-fidelity Alawasi Brand Emblem Card (awasi.jpg) */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
-            <div className="w-full max-w-sm p-6 sm:p-7 rounded-3xl bg-[#1673be] border-2 border-white/30 text-center shadow-2xl flex flex-col items-center">
-              {/* Official New Logo Emblem with Full Arabic Text */}
-              <div className="text-white w-full">
-                <AlawasiLogo variant="full" className="w-full h-auto" />
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/20 w-full flex items-center justify-center gap-3 text-xs text-sky-100 font-semibold">
-                <span>Clinical Reasoning</span>
-                <span>·</span>
-                <span>USMLE Prep</span>
-                <span>·</span>
-                <span>Shelf Exams</span>
-              </div>
-            </div>
+          {/* Active Subject indicator */}
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-slate-400">Active Subject:</span>
+            <span className="font-bold px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-amber-300 border border-blue-200 dark:border-blue-800">
+              {selectedSpecialty === 'all' ? 'All Subjects' : selectedSpecialty}
+            </span>
           </div>
+        </div>
+
+        {/* Subject Quick Filter Chips */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+          <button
+            onClick={() => setSelectedSpecialty('all')}
+            className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer shrink-0 border ${
+              selectedSpecialty === 'all'
+                ? 'bg-slate-900 text-white dark:bg-amber-400 dark:text-slate-950 border-transparent shadow-sm'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/80'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>All Subjects</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+              selectedSpecialty === 'all'
+                ? 'bg-white/20 text-white dark:bg-slate-950/20 dark:text-slate-950'
+                : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+            }`}>
+              {quizzes.length}
+            </span>
+          </button>
+
+          {MEDICAL_SPECIALTIES.map((spec) => {
+            const Icon = spec.icon;
+            const isSelected = selectedSpecialty.toLowerCase() === spec.id.toLowerCase();
+            const count = specialtyCounts[spec.id] || 0;
+
+            return (
+              <button
+                key={spec.id}
+                onClick={() => setSelectedSpecialty(isSelected ? 'all' : spec.id)}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer shrink-0 border ${
+                  isSelected
+                    ? `${spec.badgeBg} ring-2 ring-blue-500 dark:ring-amber-400 shadow-sm`
+                    : `${spec.colorBg} ${spec.colorText} ${spec.colorBorder} hover:brightness-95`
+                }`}
+                title={spec.description}
+              >
+                <Icon className="w-3.5 h-3.5 shrink-0" />
+                <span>{spec.name}</span>
+                {count > 0 && (
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/70 dark:bg-slate-900/60 font-bold">
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Filter and Search Controls */}
+      {/* ======================================================== */}
+      {/* 3. SEARCH & COMPREHENSIVE FILTER / SORT CONTROLS        */}
+      {/* ======================================================== */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        {/* Search Bar */}
         <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
@@ -184,76 +373,182 @@ export const QuizCatalog: React.FC<QuizCatalogProps> = ({ onSelectQuiz, onNaviga
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by diagnosis, clinical presentation, or keywords..."
+              placeholder="Search by medical specialty, diagnosis, presentation, or clinical keywords..."
               className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:text-white"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  fetchCatalogData();
+                }}
+                className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
           <button
             type="submit"
-            className="px-5 py-2.5 bg-slate-900 text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 font-semibold rounded-xl text-sm transition"
+            className="px-6 py-2.5 bg-slate-900 text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500 font-semibold rounded-xl text-sm transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
           >
+            <Search className="w-4 h-4" />
             Search
           </button>
         </form>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
-          {/* Subject Filter */}
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
-              <BookOpen className="w-3.5 h-3.5" /> Subject:
-            </span>
+        {/* Multi-Faceted Filters & Sorting Controls */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+          
+          {/* 1. Medical Specialty Dropdown Filter */}
+          <div className="space-y-1">
+            <label className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <Stethoscope className="w-3.5 h-3.5 text-rose-500" />
+              Medical Specialty:
+            </label>
+            <select
+              value={selectedSpecialty}
+              onChange={(e) => setSelectedSpecialty(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            >
+              <option value="all">All Medical Specialties</option>
+              {MEDICAL_SPECIALTIES.map(s => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 2. Academic Subject Filter */}
+          <div className="space-y-1">
+            <label className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-blue-500" />
+              Curriculum Subject:
+            </label>
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
-              <option value="all">All Medical Subjects</option>
+              <option value="all">All 9 Academic Subjects</option>
               {subjects.map(s => (
                 <option key={s.id} value={s.id}>{s.name} ({s.quiz_count || 0})</option>
               ))}
             </select>
           </div>
 
-          {/* Difficulty Filter */}
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5" /> Level:
-            </span>
+          {/* 3. Clinical Difficulty Filter */}
+          <div className="space-y-1">
+            <label className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <Filter className="w-3.5 h-3.5 text-amber-500" />
+              Difficulty Level:
+            </label>
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
               <option value="all">All Difficulties</option>
-              <option value="Beginner">Beginner / Pre-Clinical</option>
+              <option value="Curriculum Core">Curriculum Core</option>
+              <option value="Clinical Case">Clinical Case Vignettes</option>
               <option value="Intermediate">Intermediate</option>
               <option value="Advanced">Advanced Clinical</option>
-              <option value="USMLE Step 1">USMLE Step 1</option>
-              <option value="USMLE Step 2 CK">USMLE Step 2 CK</option>
+              <option value="Beginner">Foundational</option>
             </select>
           </div>
 
-          {/* Sort By */}
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-600 dark:text-slate-400">Sort by:</span>
+          {/* 4. Enhanced Sorting Options */}
+          <div className="space-y-1">
+            <label className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-500" />
+              Sort Quizzes By:
+            </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
+              <option value="specialty_asc">Medical Specialty (A → Z)</option>
+              <option value="specialty_desc">Medical Specialty (Z → A)</option>
               <option value="newest">Newest First</option>
               <option value="popular">Most Attempted</option>
-              <option value="oldest">Oldest</option>
+              <option value="difficulty_desc">Difficulty (Advanced → Core)</option>
+              <option value="difficulty_asc">Difficulty (Core → Advanced)</option>
+              <option value="questions_desc">Question Count (Most Questions)</option>
+              <option value="duration_asc">Shortest Time Limit</option>
+              <option value="duration_desc">Longest Time Limit</option>
+              <option value="title_asc">Title (A → Z)</option>
+              <option value="oldest">Oldest First</option>
             </select>
           </div>
         </div>
+
+        {/* Active Filter Chips & Summary Bar */}
+        {activeFilterCount > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-slate-500 font-semibold">Active filters:</span>
+              
+              {selectedSpecialty !== 'all' && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-200 border border-rose-300 dark:border-rose-800 font-medium">
+                  Specialty: {selectedSpecialty}
+                  <button onClick={() => setSelectedSpecialty('all')} className="hover:text-rose-950 dark:hover:text-white cursor-pointer">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {selectedSubject !== 'all' && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-200 border border-blue-300 dark:border-blue-800 font-medium">
+                  Subject: {subjects.find(s => s.id === selectedSubject)?.name || selectedSubject}
+                  <button onClick={() => setSelectedSubject('all')} className="hover:text-blue-950 dark:hover:text-white cursor-pointer">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {selectedDifficulty !== 'all' && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-800 font-medium">
+                  Level: {selectedDifficulty}
+                  <button onClick={() => setSelectedDifficulty('all')} className="hover:text-amber-950 dark:hover:text-white cursor-pointer">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {search && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-medium">
+                  Search: "{search}"
+                  <button onClick={() => setSearch('')} className="hover:text-slate-950 dark:hover:text-white cursor-pointer">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {sortBy !== 'newest' && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800 font-medium">
+                  Sorted: {sortBy.replace('_', ' ')}
+                </span>
+              )}
+            </div>
+
+            <button
+              onClick={handleResetFilters}
+              className="text-xs text-rose-600 dark:text-rose-400 hover:underline font-semibold cursor-pointer"
+            >
+              Reset All Filters
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Quizzes Grid */}
+      {/* ======================================================== */}
+      {/* 4. QUIZZES GRID & STUDY SESSION CARDS                   */}
+      {/* ======================================================== */}
       {loading ? (
         <div className="py-20 text-center space-y-3">
           <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-slate-500">Loading clinical examinations...</p>
+          <p className="text-sm text-slate-500">Loading medical specialty examinations...</p>
         </div>
       ) : error ? (
         <div className="p-6 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-center space-y-2">
@@ -261,7 +556,7 @@ export const QuizCatalog: React.FC<QuizCatalogProps> = ({ onSelectQuiz, onNaviga
           <p className="text-sm font-semibold text-rose-800 dark:text-rose-200">{error}</p>
           <button
             onClick={fetchCatalogData}
-            className="px-4 py-1.5 text-xs bg-rose-600 text-white font-medium rounded-lg hover:bg-rose-700 transition"
+            className="px-4 py-1.5 text-xs bg-rose-600 text-white font-medium rounded-lg hover:bg-rose-700 transition cursor-pointer"
           >
             Retry
           </button>
@@ -277,28 +572,24 @@ export const QuizCatalog: React.FC<QuizCatalogProps> = ({ onSelectQuiz, onNaviga
               No Medical Quizzes Found
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {search || selectedSubject !== 'all' || selectedDifficulty !== 'all'
-                ? 'No quizzes match your selected filter criteria. Try resetting filters.'
+              {search || selectedSpecialty !== 'all' || selectedSubject !== 'all' || selectedDifficulty !== 'all'
+                ? `No quizzes match the selected medical specialty (${selectedSpecialty}) or search criteria.`
                 : 'No quizzes have been published yet by faculty educators.'}
             </p>
           </div>
 
           <div className="pt-2 flex items-center justify-center gap-3">
-            {search || selectedSubject !== 'all' || selectedDifficulty !== 'all' ? (
+            {search || selectedSpecialty !== 'all' || selectedSubject !== 'all' || selectedDifficulty !== 'all' ? (
               <button
-                onClick={() => {
-                  setSearch('');
-                  setSelectedSubject('all');
-                  setSelectedDifficulty('all');
-                }}
-                className="px-4 py-2 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition"
+                onClick={handleResetFilters}
+                className="px-4 py-2 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition cursor-pointer"
               >
                 Reset All Filters
               </button>
             ) : user?.role === 'teacher' || user?.role === 'admin' ? (
               <button
                 onClick={onNavigateToTeacher}
-                className="px-5 py-2.5 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition flex items-center gap-2"
+                className="px-5 py-2.5 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
               >
                 <PlusCircle className="w-4 h-4" />
                 Create and Publish First Quiz
@@ -309,81 +600,101 @@ export const QuizCatalog: React.FC<QuizCatalogProps> = ({ onSelectQuiz, onNaviga
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {quizzes.map((quiz) => (
-            <div
-              key={quiz.id}
-              className="group bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-blue-500/60 dark:hover:border-blue-500/60 p-6 shadow-sm hover:shadow-xl transition-all duration-200 flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                {/* Header tags */}
-                <div className="flex items-center justify-between gap-2">
-                  <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                    {quiz.subject_name}
-                  </span>
-                  {getDifficultyBadge(quiz.difficulty)}
-                </div>
+        <div className="space-y-4">
+          {/* Status Counter */}
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1">
+            <span>
+              Showing <strong className="text-slate-900 dark:text-white font-bold">{quizzes.length}</strong> medical study {quizzes.length === 1 ? 'module' : 'modules'}
+              {selectedSpecialty !== 'all' && (
+                <> in <span className="font-bold text-rose-600 dark:text-rose-400">{selectedSpecialty}</span></>
+              )}
+            </span>
+            <span className="hidden sm:inline">
+              Active Recall Mode · Batch 99 Curriculum
+            </span>
+          </div>
 
-                {/* Title & Description */}
-                <div>
-                  <h3 className="font-bold text-lg text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-400 transition line-clamp-2">
-                    {quiz.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-3 leading-relaxed">
-                    {quiz.description || 'Comprehensive clinical questions designed to test board-relevant concepts.'}
-                  </p>
-                </div>
-
-                {/* Topic if specified */}
-                {quiz.topic_name && (
-                  <p className="text-[11px] font-medium text-blue-700 dark:text-amber-300 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded inline-block">
-                    Topic: {quiz.topic_name}
-                  </p>
-                )}
-              </div>
-
-              {/* Footer Meta & Start Button */}
-              <div className="pt-5 mt-4 border-t border-slate-100 dark:border-slate-800 space-y-4">
-                <div className="grid grid-cols-3 gap-2 text-center text-xs text-slate-500 dark:text-slate-400">
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl">
-                    <p className="font-bold text-slate-800 dark:text-slate-200">{quiz.question_count || 0}</p>
-                    <p className="text-[10px]">Questions</p>
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {quizzes.map((quiz) => (
+              <div
+                key={quiz.id}
+                className="group bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-blue-500/60 dark:hover:border-amber-400/60 p-6 shadow-sm hover:shadow-xl transition-all duration-200 flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  {/* Header tags: Specialty & Difficulty */}
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    {getSpecialtyBadge(quiz.medical_specialty || quiz.subject_name)}
+                    {getDifficultyBadge(quiz.difficulty)}
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl">
-                    <p className="font-bold text-slate-800 dark:text-slate-200">
-                      {quiz.time_limit_minutes > 0 ? `${quiz.time_limit_minutes}m` : 'Untimed'}
+
+                  {/* Subject Name Tag */}
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-medium flex items-center gap-1">
+                      <BookOpen className="w-3 h-3 text-blue-500" />
+                      {quiz.subject_name}
+                    </span>
+                    {quiz.topic_name && (
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[150px]">
+                        • {quiz.topic_name}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Title & Description */}
+                  <div>
+                    <h3 className="font-bold text-lg text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-amber-400 transition line-clamp-2 leading-snug">
+                      {quiz.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-3 leading-relaxed">
+                      {quiz.description || 'Comprehensive clinical vignettes designed to test board-relevant concepts.'}
                     </p>
-                    <p className="text-[10px]">Duration</p>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl">
-                    <p className="font-bold text-slate-800 dark:text-slate-200">{quiz.attempt_count || 0}</p>
-                    <p className="text-[10px]">Attempts</p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="text-[11px] text-slate-500">
-                    <span className="text-slate-400">By </span>
-                    <span className="font-semibold text-slate-700 dark:text-slate-300">{quiz.creator_name}</span>
+                {/* Footer Meta & Start Button */}
+                <div className="pt-5 mt-4 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                  <div className="grid grid-cols-3 gap-2 text-center text-xs text-slate-500 dark:text-slate-400">
+                    <div className="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <p className="font-bold text-slate-800 dark:text-slate-200">{quiz.question_count || 0}</p>
+                      <p className="text-[10px]">Questions</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <p className="font-bold text-slate-800 dark:text-slate-200">
+                        {quiz.time_limit_minutes > 0 ? `${quiz.time_limit_minutes}m` : 'Untimed'}
+                      </p>
+                      <p className="text-[10px]">Duration</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
+                      <p className="font-bold text-slate-800 dark:text-slate-200">{quiz.attempt_count || 0}</p>
+                      <p className="text-[10px]">Attempts</p>
+                    </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      if (!user) {
-                        openAuthModal('login');
-                      } else {
-                        onSelectQuiz(quiz.id);
-                      }
-                    }}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-700 to-sky-600 hover:from-blue-800 hover:to-sky-700 text-white text-xs font-bold shadow-md shadow-blue-800/20 transition"
-                  >
-                    Start Quiz
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex items-center justify-between">
+                    <div className="text-[11px] text-slate-500 truncate max-w-[140px]">
+                      <span className="text-slate-400">By </span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">{quiz.creator_name}</span>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        if (!user) {
+                          openAuthModal('login');
+                        } else {
+                          onSelectQuiz(quiz.id);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-700 to-sky-600 hover:from-blue-800 hover:to-sky-700 text-white text-xs font-bold shadow-md shadow-blue-800/20 transition cursor-pointer group-hover:scale-102"
+                    >
+                      <span>Start Session</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

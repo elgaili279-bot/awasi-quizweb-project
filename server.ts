@@ -8,6 +8,11 @@ import { attemptsRouter } from './server/routes/attempts.ts';
 import { questionBankRouter } from './server/routes/questionBank.ts';
 import { leaderboardRouter } from './server/routes/leaderboard.ts';
 import { adminRouter } from './server/routes/admin.ts';
+import { communityRouter } from './server/routes/community.ts';
+import { weakPointsRouter } from './server/routes/weakPoints.ts';
+import { announcementsRouter } from './server/routes/announcements.ts';
+import { teacherAnalyticsRouter } from './server/routes/teacherAnalytics.ts';
+import { geminiChatRouter } from './server/routes/geminiChat.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,6 +33,11 @@ async function startServer() {
   app.use('/api/question-bank', questionBankRouter);
   app.use('/api/leaderboard', leaderboardRouter);
   app.use('/api/admin', adminRouter);
+  app.use('/api/community', communityRouter);
+  app.use('/api/weak-points', weakPointsRouter);
+  app.use('/api/announcements', announcementsRouter);
+  app.use('/api/teacher', teacherAnalyticsRouter);
+  app.use('/api/gemini', geminiChatRouter);
 
   // Health check endpoint
   app.get('/api/health', (_req, res) => {

@@ -1,41 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 280" width="100%" height="100%" fill="none">
-  <!-- Outer Rectangular Frame with gap at bottom -->
-  <path d="M 40 190 L 40 30 L 500 30 L 500 190 L 370 190" stroke="currentColor" stroke-width="6" stroke-linecap="square" fill="none" />
-  <path d="M 170 190 L 40 190" stroke="currentColor" stroke-width="6" stroke-linecap="square" fill="none" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 350" fill="none">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+  
+  <g filter="url(#shadow)">
+    <!-- Outer Box Frame with gap for ALAWASI -->
+    <path d="M 215 175 H 25 V 20 H 575 V 175 H 385" stroke="#FFFFFF" stroke-width="8" stroke-linecap="square" fill="none" />
+    
+    <!-- Latin Lettermark in bottom gap -->
+    <text x="300" y="181" text-anchor="middle" fill="#FFFFFF" font-family="'Inter', system-ui, -apple-system, sans-serif" font-size="16" font-weight="900" letter-spacing="8">ALAWASI</text>
+    
+    <!-- Centered Underline below ALAWASI -->
+    <line x1="245" y1="198" x2="355" y2="198" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" />
 
-  <!-- Centered ALAWASI in bottom border gap -->
-  <text x="270" y="196" text-anchor="middle" fill="currentColor" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="900" letter-spacing="7">ALAWASI</text>
+    <!-- === Geometric Kufic "الأواسي" Inner Calligraphy === -->
+    <!-- Right side: Three solid vertical pillars (ا ل أ) -->
+    <rect x="522" y="36" width="30" height="120" fill="#FFFFFF" />
+    <rect x="476" y="36" width="30" height="120" fill="#FFFFFF" />
+    <rect x="430" y="36" width="30" height="120" fill="#FFFFFF" />
 
-  <!-- Geometric Calligraphy: Three Right Pillars (ا ل ا) -->
-  <rect x="446" y="46" width="28" height="128" fill="currentColor" />
-  <rect x="402" y="46" width="28" height="128" fill="currentColor" />
-  <rect x="358" y="46" width="28" height="128" fill="currentColor" />
+    <!-- Horizontal Connecting Baseline from Yaa to Waw -->
+    <rect x="44" y="138" width="364" height="18" fill="#FFFFFF" />
 
-  <!-- Continuous Connecting Base Bar -->
-  <rect x="58" y="150" width="300" height="24" fill="currentColor" />
+    <!-- Waw (و): Vertical Stem and Loop -->
+    <rect x="376" y="36" width="28" height="120" fill="#FFFFFF" />
+    <path fill-rule="evenodd" d="M 320 36 H 404 V 100 H 320 Z M 346 56 H 378 V 80 H 346 Z" fill="#FFFFFF" />
 
-  <!-- Waw (و) structure -->
-  <rect x="314" y="46" width="26" height="128" fill="currentColor" />
-  <path d="M 264 46 L 340 46 L 340 120 L 264 120 Z" fill="currentColor" />
-  <!-- Waw inner cutout -->
-  <rect x="286" y="68" width="30" height="32" fill="#1673be" class="alawasi-cutout" />
+    <!-- Alif (ا): Stem connected to baseline -->
+    <rect x="274" y="36" width="26" height="120" fill="#FFFFFF" />
 
-  <!-- Seen (س) teeth -->
-  <rect x="222" y="46" width="24" height="128" fill="currentColor" />
-  <rect x="180" y="46" width="24" height="128" fill="currentColor" />
+    <!-- Seen (س): Teeth pillars connected to baseline -->
+    <rect x="226" y="36" width="24" height="120" fill="#FFFFFF" />
+    <rect x="180" y="36" width="24" height="120" fill="#FFFFFF" />
 
-  <!-- Left block (ي) and loop -->
-  <path d="M 58 46 L 162 46 L 162 120 L 58 120 Z" fill="currentColor" />
-  <!-- Two Ya dots as cutouts -->
-  <rect x="78" y="66" width="28" height="34" fill="#1673be" class="alawasi-cutout" />
-  <rect x="116" y="66" width="28" height="34" fill="#1673be" class="alawasi-cutout" />
-  <!-- Leftmost pillar -->
-  <rect x="58" y="46" width="24" height="128" fill="currentColor" />
+    <!-- Yaa (ي): Left pillar and square cutouts -->
+    <rect x="44" y="36" width="28" height="120" fill="#FFFFFF" />
+    <path fill-rule="evenodd" d="M 44 36 H 156 V 100 H 44 Z M 68 56 H 96 V 80 H 68 Z M 108 56 H 136 V 80 H 108 Z" fill="#FFFFFF" />
 
-  <!-- Subtitle Divider Line -->
-  <line x1="220" y1="220" x2="320" y2="220" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
-
-  <!-- Arabic Official Subtitle (UofK B99) -->
-  <text x="270" y="244" text-anchor="middle" fill="currentColor" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-size="14" font-weight="bold" letter-spacing="1">الدفعة التاسعة والتسعون - أواسي</text>
-  <text x="270" y="266" text-anchor="middle" fill="currentColor" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-size="14" font-weight="bold" letter-spacing="1">كلية الطب - جامعة الخرطوم</text>
+    <!-- === Centerpiece Calligraphy Identity === -->
+    <!-- أكاديمية in vibrant gold -->
+    <text x="300" y="248" text-anchor="middle" fill="#FFC425" font-family="'Cairo', 'Tajawal', system-ui, sans-serif" font-size="34" font-weight="900" letter-spacing="1">أكاديمية</text>
+    <!-- الأواسي in pure crisp white -->
+    <text x="300" y="312" text-anchor="middle" fill="#FFFFFF" font-family="'Cairo', 'Tajawal', system-ui, sans-serif" font-size="42" font-weight="900" letter-spacing="2">الأواسي</text>
+  </g>
 </svg>
